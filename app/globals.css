@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Shreehill Estates Brand Colors */
+  --background: #F8F6F0;           /* Warm cream background */
+  --foreground: #333333;           /* Charcoal grey for main text */
+  --card: #FFFFFF;                 /* Pure white for cards */
+  --card-foreground: #333333;      /* Text on cards */
+  --popover: #FFFFFF;              /* Popover backgrounds */
+  --popover-foreground: #333333;   /* Popover text */
+  --primary: #2C5530;              /* Deep Forest Green */
+  --primary-foreground: #F8F6F0;   /* Light text on primary */
+  --secondary: #D4A574;            /* Warm Gold/Amber */
+  --secondary-foreground: #333333; /* Dark text on secondary */
+  --muted: #F0EDE6;                /* Subtle background areas */
+  --muted-foreground: #666666;     /* Muted text */
+  --accent: #1B4B73;               /* Deep Blue for CTAs */
+  --accent-foreground: #F8F6F0;    /* Light text on accent */
+  --destructive: #DC2626;          /* Error/destructive actions */
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E1D8;               /* Subtle borders */
+  --input: #FFFFFF;                /* Input backgrounds */
+  --ring: #2C5530;                 /* Focus rings */
+  --radius: 0.5rem;                /* Default border radius */
+  
+  /* Custom Shreehill Colors */
+  --forest-green: #2C5530;
+  --warm-gold: #D4A574;
+  --charcoal: #333333;
+  --cream: #F8F6F0;
+  --trust-blue: #1B4B73;
+  --success-green: #16A34A;
+  --warning-amber: #F59E0B;
+}
+
+/*  */
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+}
+
+/* Typography Classes */
+.font-heading {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-weight: 600;
+}
+
+.font-body {
+  font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+}
+
+/* Custom Utility Classes for Shreehill Theme */
+.bg-brand-primary {
+  background-color: var(--forest-green);
+  color: var(--cream);
+}
+
+.bg-brand-secondary {
+  background-color: var(--warm-gold);
+  color: var(--charcoal);
+}
+
+.bg-brand-accent {
+  background-color: var(--trust-blue);
+  color: var(--cream);
+}
+
+.text-brand-primary {
+  color: var(--forest-green);
+}
+
+.text-brand-secondary {
+  color: var(--warm-gold);
+}
+
+.text-brand-accent {
+  color: var(--trust-blue);
+}
+
+.border-brand-primary {
+  border-color: var(--forest-green);
+}
+
+.border-brand-secondary {
+  border-color: var(--warm-gold);
+}
+
+/* Elegant shadows for property cards */
+.shadow-elegant {
+  box-shadow: 0 4px 6px -1px rgba(44, 85, 48, 0.1), 
+              0 2px 4px -1px rgba(44, 85, 48, 0.06);
+}
+
+.shadow-elegant-hover {
+  box-shadow: 0 10px 15px -3px rgba(44, 85, 48, 0.1), 
+              0 4px 6px -2px rgba(44, 85, 48, 0.05);
+}
+
+/* Smooth transitions for interactive elements */
+.transition-elegant {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom gradient backgrounds */
+.bg-gradient-brand {
+  background: linear-gradient(135deg, var(--forest-green) 0%, var(--trust-blue) 100%);
+}
+
+.bg-gradient-warm {
+  background: linear-gradient(135deg, var(--warm-gold) 0%, #F4D19B 100%);
+}
+
+/* Focus styles that match the brand */
+.focus-brand:focus {
+  outline: 2px solid var(--forest-green);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--forest-green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--trust-blue);
+}
