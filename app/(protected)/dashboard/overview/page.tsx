@@ -202,7 +202,7 @@ const QuickStats = ({ billsSummary }:{billsSummary:BillSummary|undefined}) => {
     },
     {
       label: 'Pending Bills',
-      value: billsSummary?.pending_bills_count?.toString(),
+      value: billsSummary?.bill_counts?.pending?.toString(),
       icon: FileText,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
@@ -210,7 +210,7 @@ const QuickStats = ({ billsSummary }:{billsSummary:BillSummary|undefined}) => {
     },
     {
       label: 'Total Bills',
-      value: billsSummary?.total_bills?.toString(),
+      value: billsSummary?.bill_counts?.total?.toString(),
       icon: CreditCard,
       color: 'text-green-600',
       bgColor: 'bg-green-50',

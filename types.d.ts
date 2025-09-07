@@ -285,7 +285,7 @@ interface Property{
  interface Payment {
   id: string;
   payment_reference: string;
-  amount_paid: string; // Decimal as string
+  amount_paid: any; // Decimal as any
   payment_method: 'mpesa' | 'bank_transfer' | 'cash' | 'card' | 'cheque';
   payment_date: string; // ISO datetime string
   payment_status: 'pending' | 'completed' | 'failed' | 'reversed';

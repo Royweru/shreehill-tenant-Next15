@@ -18,4 +18,16 @@ export const billQueryKeys = {
   summary: () => [...billQueryKeys.all, 'summary'] as const,
 };
 
+export const propertyQueryKeys = {
+  my: ['property','my'] as const,
+};
+
+export const unitQueryKeys = {
+  my: ['unit','my'] as const,
+};
+
+export const notificationQueryKeys ={
+  all: ['tenant', 'notifications'] as const,
+    list: (params?: any) => ['tenant', 'notifications', 'list', params] as const,
+}
 

@@ -1,11 +1,12 @@
 // hooks/usePayments.ts
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { paymentService } from '@/services/paymentServices';
 import { billQueryKeys, paymentQueryKeys } from '@/lib/queryKeys';
 import { billsService } from '@/services/billsService';
 
-// Query Keys
+// Add type imports - you'll need to uncomment these in your service file
+
 
 // Payments Hooks
 export const usePayments = (filters?: PaymentFilters) => {
@@ -61,7 +62,7 @@ export const usePaymentHistory = (page: number = 1, pageSize: number = 10) => {
   return useQuery({
     queryKey: ['payments', 'history', { page, pageSize }],
     queryFn: () => paymentService.getPaymentHistory(page, pageSize),
-    // Keep previous data while loading new page
+     // Keep previous data while loading new page
   });
 };
 
@@ -90,7 +91,7 @@ export const useMpesaPayment = () => {
 
   return useMutation({
     mutationFn: (data: MPesaPaymentRequest) => paymentService.initiateMpesaPayment(data), 
-    onSuccess: (data:any) => {
+    onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message || 'Payment initiated successfully! Check your phone for M-Pesa PIN prompt.');
         
@@ -134,11 +135,11 @@ export const usePaymentOperations = () => {
   };
 };
 
-// Hook for infinite scrolling payments
+// Fixed: Hook for infinite scrolling payments - using useInfiniteQuery
 export const useInfinitePayments = (filters?: PaymentFilters) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['payments', 'infinite', filters],
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
       const response = await paymentService.getPayments({
         ...filters,
         page: pageParam,
@@ -150,8 +151,8 @@ export const useInfinitePayments = (filters?: PaymentFilters) => {
         hasMore: !!response.next,
       };
     },
-    getNextPageParam: (lastPage:any) => lastPage.nextPage,
-    keepPreviousData: true,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1, // Required in newer versions of tanstack/react-query
   });
 };
 
@@ -174,21 +175,21 @@ export const usePaymentStatusTracker = (paymentId: string) => {
       return 5000; // 5 seconds for pending payments
     },
     refetchIntervalInBackground: false,
-    onSuccess: (data:any) => {
-      if (data.status === 'completed') {
-        toast.success(`Payment of KES ${data.amount_paid} completed successfully!`);
-      } else if (data.status === 'failed') {
-        toast.error('Payment failed. Please try again.');
-      } else if (data.status === 'cancelled') {
-        toast.error('Payment was cancelled.');
-      }
-    },
+   
   });
 };
 
 // Hook for payment analytics
 export const usePaymentAnalytics = () => {
-  return useQuery({
+  return useQuery<{
+    summary: BillSummary;
+    monthlyPayments: {
+      month: string;
+      amount: number;
+    }[];
+    totalPayments: number;
+    averagePayment: number;
+  }>({
     queryKey: ['payments', 'analytics'],
     queryFn: async () => {
       const [summary, payments] = await Promise.all([
@@ -197,12 +198,12 @@ export const usePaymentAnalytics = () => {
       ]);
 
       // Calculate analytics from the data
-      const completedPayments = payments.results.filter(p => p.payment_status === 'completed');
-      const monthlyPayments = completedPayments.reduce((acc:any, payment:any) => {
+      const completedPayments = payments.results.filter((p: Payment) => p.payment_status === 'completed');
+      const monthlyPayments = completedPayments.reduce((acc: Record<string, number>, payment: Payment) => {
         const month = new Date(payment.payment_date).toISOString().slice(0, 7); // YYYY-MM
         acc[month] = (acc[month] || 0) + parseFloat(payment.amount_paid);
         return acc;
-      }, {} as Record<string, number>);
+      }, {});
 
       return {
         summary,
@@ -212,7 +213,7 @@ export const usePaymentAnalytics = () => {
         })),
         totalPayments: completedPayments.length,
         averagePayment: completedPayments.length > 0 
-          ? (completedPayments.reduce((sum, p) => sum + parseFloat(p.amount_paid), 0) / completedPayments.length)
+          ? (completedPayments.reduce((sum: number, p: Payment) => sum + parseFloat(p.amount_paid), 0) / completedPayments.length)
           : 0,
       };
     },
