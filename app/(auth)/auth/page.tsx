@@ -1,10 +1,11 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Home, Mail, Lock, User, Phone, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function AuthPages() {
+// Separate component that uses useSearchParams
+function AuthPagesContent() {
   const searchParams = useSearchParams();
   const {login, isLoggingIn , register, isRegistering} = useAuth();
   const [isLogin, setIsLogin] = useState(true);
@@ -431,5 +432,26 @@ export default function AuthPages() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading component for Suspense fallback
+function AuthLoading() {
+  return (
+    <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: '#F8F6F0'}}>
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-gray-300 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function AuthPages() {
+  return (
+    <Suspense fallback={<AuthLoading />}>
+      <AuthPagesContent />
+    </Suspense>
   );
 }
