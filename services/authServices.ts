@@ -1,42 +1,37 @@
-import api from '@/lib/api';
 import Cookies from 'js-cookie';
+import { apiClient } from '@/lib/apiClient';
 
 class AuthService {
   // Register user
   register = async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await api.post('/api/users/auth/registration/', data);
-    return response.data;
+    return await apiClient.post<AuthResponse>('/api/users/auth/registration/', data);
   }
 
   // Login user
   login = async (data: LoginData): Promise<AuthResponse> => {
-    const response = await api.post('/api/users/auth/login/', data);
-    const { access, refresh, user } = response.data;
+    const response = await apiClient.post<AuthResponse>('/api/users/auth/login/', data);
+    const { access, refresh } = response;
     
     // Store tokens in cookies using the centralized method
     this.setTokens(access, refresh);
     
-    return response.data;
+    return response;
   }
 
   // Verify email
   verifyEmail = async (key: string): Promise<VerifyEmailResponse> => {
-    // Use GET request to your custom endpoint
-    const response = await api.get(`/api/users/confirm-email/${key}/`);
-    return response.data;
+    return await apiClient.get<VerifyEmailResponse>(`/api/users/confirm-email/${key}/`);
   }
 
-  // Optional: Add resend verification method
+  // Resend verification email
   resendEmailVerification = async (): Promise<{ message: string }> => {
-    const response = await api.post('/api/users/resend-verification/');
-    return response.data;
+    return await apiClient.post<{ message: string }>('/api/users/resend-verification/');
   }
 
   // Get current user profile
-  getCurrentUser = async (): Promise<User> => {
-    const response = await api.get('/api/users/status/');
-    console.log('Current user data:', response.data);
-    return response.data;
+  getCurrentUser = async (): Promise<UserStatus> => {
+    const response = await apiClient.get<UserStatus>('/api/users/status/');
+    return response;
   }
 
   getTokens = (): { access: string | null, refresh: string | null } => {
@@ -53,23 +48,29 @@ class AuthService {
   }
 
   // Refresh access token method
-  refreshToken = async (): Promise<AuthResponse> => {
+  refreshToken = async (): Promise<boolean> => {
     const { refresh } = this.getTokens();
     
     if (!refresh) {
-      throw new Error('No refresh token available');
+      console.log('No refresh token available');
+      return false;
     }
 
-    const response = await api.post('/api/users/auth/token/refresh/', {
-      refresh: refresh
-    });
+    try {
+      const response = await apiClient.post<{ access: string; refresh?: string }>('/api/users/auth/token/refresh/', {
+        refresh: refresh
+      });
 
-    // Update tokens with new access token using centralized method
-    const { access, refresh: newRefresh } = response.data;
-    this.setTokens(access, newRefresh || refresh);
-    
-    console.log('Token refreshed successfully');
-    return response.data;
+      // Update tokens with new access token using centralized method
+      const { access, refresh: newRefresh } = response;
+      this.setTokens(access, newRefresh || refresh);
+      
+      console.log('Token refreshed successfully');
+      return true;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
   }
 
   // Check if user is authenticated
@@ -83,7 +84,7 @@ class AuthService {
     try {
       const refreshToken = Cookies.get('refresh_token');
       if (refreshToken) {
-        await api.post('/api/users/auth/logout/', { refresh: refreshToken });
+        await apiClient.post('/api/users/auth/logout/', { refresh: refreshToken });
       }
     } catch (error) {
       console.error('Logout error:', error);
@@ -116,6 +117,19 @@ class AuthService {
 
   getAccessToken = (): string | undefined => {
     return Cookies.get('access_token');
+  }
+
+  // Get stored tokens for interceptor
+  getStoredTokens = () => {
+    return {
+      access: Cookies.get('access_token'),
+      refresh: Cookies.get('refresh_token')
+    };
+  }
+
+  // Clear auth data
+  clearAuthData = () => {
+    this.clearTokens();
   }
 }
 

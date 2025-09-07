@@ -1,42 +1,38 @@
-import { tenantQueryKeys } from "@/lib/utils";
-import { tenantService } from "@/services/tenantService";
+import { billQueryKeys } from "@/lib/queryKeys";
+import { billsService} from "@/services/billsService";
 import { useQuery } from "@tanstack/react-query";
 
-export const useTenantBills = (params?: {
-  page?: number;
-  status?: string;
-  bill_type?: string;
-  search?: string;
-}) => {
+// Bills Hooks
+export const useBills = (filters?: BillFilters) => {
   return useQuery({
-    queryKey: tenantQueryKeys.bills.list(params),
-    queryFn: () => tenantService.getBills(params),
-    staleTime: 1000 * 60 * 2, // 2 minutes
-    keepPreviousData: true,
+    queryKey: billQueryKeys.list(filters),
+    queryFn: () => billsService.getBills(filters),
+    staleTime: 30 * 1000, // 30 seconds
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
-export const useTenantBillDetails = (billId: string) => {
+export const useBill = (billId: string) => {
   return useQuery({
-    queryKey: tenantQueryKeys.bills.detail(billId),
-    queryFn: () => tenantService.getBillDetails(billId),
+    queryKey: billQueryKeys.detail(billId),
+    queryFn: () => billsService.getBill(billId),
     enabled: !!billId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
-export const useOverdueBills = (params?: { page?: number }) => {
+export const useOverdueBills = () => {
   return useQuery({
-    queryKey: tenantQueryKeys.bills.overdue(params),
-    queryFn: () => tenantService.getOverdueBills(params),
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    queryKey: billQueryKeys.overdue(),
+    queryFn: billsService.getOverdueBills,
+    staleTime: 60 * 1000, // 1 minute
   });
 };
 
-export const useBillsSummary = () => {
+export const useBillSummary = () => {
   return useQuery({
-    queryKey: tenantQueryKeys.bills.summary,
-    queryFn: tenantService.getBillsSummary,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: billQueryKeys.summary(),
+    queryFn: billsService.getBillSummary,
+    staleTime: 30 * 1000, // 30 seconds
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 };

@@ -1,26 +1,31 @@
 import { tenantQueryKeys } from "@/lib/utils";
-import { tenantService } from "@/services/tenantService";
+import { paymentService } from "@/services/paymentServices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 export const useMpesaPayment = () => {
   const queryClient = useQueryClient();
-  
+     
   return useMutation({
-    mutationFn: (data: MPesaPaymentRequest) => tenantService.initiateMpesaPayment(data),
+    mutationFn: async (data: MPesaPaymentRequest) => paymentService.initiateMpesaPayment(data),
     onSuccess: (data) => {
-      if (data.success) {
+      console.log('Hook: Payment success callback with data:', data);
+      if (data?.success) {
         toast.success('M-Pesa payment initiated successfully! Check your phone for the STK push.');
-        // Invalidate relevant queries
         queryClient.invalidateQueries({ queryKey: tenantQueryKeys.dashboard });
         queryClient.invalidateQueries({ queryKey: tenantQueryKeys.bills.all });
         queryClient.invalidateQueries({ queryKey: tenantQueryKeys.payments.all });
       } else {
-        toast.error(data.error || 'Payment initiation failed');
+        toast.error(data?.error || 'Payment initiation failed');
       }
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.error || 'Payment initiation failed');
+      console.error('Hook: Payment error callback:', error);
+      const errorMessage = error?.response?.data?.error || 
+                          error?.response?.data?.detail ||
+                          error?.message ||
+                          'Payment initiation failed';
+      toast.error(errorMessage);
     },
   });
 };
@@ -28,7 +33,7 @@ export const useMpesaPayment = () => {
 export const usePaymentStatus = (paymentId: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: tenantQueryKeys.payments.status(paymentId),
-    queryFn: () => tenantService.checkPaymentStatus(paymentId),
+    queryFn: () => paymentService.checkPaymentStatus(paymentId),
     enabled: enabled && !!paymentId,
     refetchInterval: (data:any) => {
       // Stop polling if payment is completed or failed

@@ -1,34 +1,221 @@
-import { tenantQueryKeys } from "@/lib/utils";
-import { tenantService } from "@/services/tenantService";
-import { useQuery } from "@tanstack/react-query";
+// hooks/usePayments.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
+import { paymentService } from '@/services/paymentServices';
+import { billQueryKeys, paymentQueryKeys } from '@/lib/queryKeys';
+import { billsService } from '@/services/billsService';
 
-export const useTenantPayments = (params?: {
-  page?: number;
-  payment_method?: string;
-  payment_status?: string;
-  search?: string;
-}) => {
+// Query Keys
+
+// Payments Hooks
+export const usePayments = (filters?: PaymentFilters) => {
   return useQuery({
-    queryKey: tenantQueryKeys.payments.list(params),
-    queryFn: () => tenantService.getPayments(params),
-    staleTime: 1000 * 60 * 2, // 2 minutes
-    keepPreviousData: true,
+    queryKey: paymentQueryKeys.list(filters),
+    queryFn: () => paymentService.getPayments(filters),
+    staleTime: 30 * 1000,
+    gcTime: 5 * 60 * 1000,
   });
 };
 
-export const usePaymentDetails = (paymentId: string) => {
+export const usePayment = (paymentId: string) => {
   return useQuery({
-    queryKey: tenantQueryKeys.payments.detail(paymentId),
-    queryFn: () => tenantService.getPaymentDetails(paymentId),
+    queryKey: paymentQueryKeys.detail(paymentId),
+    queryFn: () => paymentService.getPayment(paymentId),
     enabled: !!paymentId,
-    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
 export const useRecentPayments = () => {
   return useQuery({
-    queryKey: tenantQueryKeys.payments.recent,
-    queryFn: tenantService.getRecentPayments,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: paymentQueryKeys.recent(),
+    queryFn: paymentService.getRecentPayments,
+    staleTime: 60 * 1000,
+  });
+};
+
+export const usePaymentStatus = (paymentId: string, enabled: boolean = true) => {
+  return useQuery({
+    queryKey: paymentQueryKeys.status(paymentId),
+    queryFn: () => paymentService.checkPaymentStatus(paymentId),
+    enabled: !!paymentId && enabled,
+    refetchInterval: (data:any) => {
+      // Keep polling if payment is still pending
+      return data?.status === 'pending' ? 3000 : false; // 3 seconds
+    },
+    refetchIntervalInBackground: false,
+  });
+};
+
+// Dashboard Stats Hook
+export const useDashboardStats = () => {
+  return useQuery({
+    queryKey: ['dashboard', 'stats'],
+    queryFn: paymentService.getDashboardStats,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
+};
+
+// Payment History Hook
+export const usePaymentHistory = (page: number = 1, pageSize: number = 10) => {
+  return useQuery({
+    queryKey: ['payments', 'history', { page, pageSize }],
+    queryFn: () => paymentService.getPaymentHistory(page, pageSize),
+    // Keep previous data while loading new page
+  });
+};
+
+// Search Hooks
+export const useSearchBills = (query: string) => {
+  return useQuery({
+    queryKey: ['bills', 'search', query],
+    queryFn: () => paymentService.searchBills(query),
+    enabled: query.length > 2, // Only search if query is longer than 2 characters
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useSearchPayments = (query: string) => {
+  return useQuery({
+    queryKey: ['payments', 'search', query],
+    queryFn: () => paymentService.searchPayments(query),
+    enabled: query.length > 2,
+    staleTime: 30 * 1000,
+  });
+};
+
+// Mutations
+export const useMpesaPayment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: MPesaPaymentRequest) => paymentService.initiateMpesaPayment(data), 
+    onSuccess: (data:any) => {
+      if (data.success) {
+        toast.success(data.message || 'Payment initiated successfully! Check your phone for M-Pesa PIN prompt.');
+        
+        // Invalidate relevant queries
+        queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all });
+        queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      } else {
+        toast.error(data.error || 'Payment initiation failed');
+      }
+    },
+    onError: (error: any) => {
+      console.error('M-Pesa payment error:', error);
+      toast.error(
+        error.response?.data?.error || 
+        error.response?.data?.detail || 
+        'Payment failed. Please try again.'
+      );
+    },
+  });
+};
+
+// Custom hooks for common patterns
+export const usePaymentOperations = () => {
+  const queryClient = useQueryClient();
+  
+  const refreshPaymentData = () => {
+    queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all });
+    queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+  };
+
+  const refreshBillData = () => {
+    queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+  };
+
+  return {
+    refreshPaymentData,
+    refreshBillData,
+  };
+};
+
+// Hook for infinite scrolling payments
+export const useInfinitePayments = (filters?: PaymentFilters) => {
+  return useQuery({
+    queryKey: ['payments', 'infinite', filters],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await paymentService.getPayments({
+        ...filters,
+        page: pageParam,
+        page_size: 20,
+      });
+      return {
+        data: response.results,
+        nextPage: response.next ? pageParam + 1 : null,
+        hasMore: !!response.next,
+      };
+    },
+    getNextPageParam: (lastPage:any) => lastPage.nextPage,
+    keepPreviousData: true,
+  });
+};
+
+// Hook for real-time payment status tracking
+export const usePaymentStatusTracker = (paymentId: string) => {
+  const queryClient = useQueryClient();
+
+  return useQuery({
+    queryKey: paymentQueryKeys.status(paymentId),
+    queryFn: () => paymentService.checkPaymentStatus(paymentId),
+    enabled: !!paymentId,
+    refetchInterval: (data:any) => {
+      // Stop polling once payment is completed, failed, or cancelled
+      if (data?.status && ['completed', 'failed', 'cancelled', 'reversed'].includes(data.status)) {
+        // Refresh other payment data when status changes
+        queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all });
+        queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
+        return false;
+      }
+      return 5000; // 5 seconds for pending payments
+    },
+    refetchIntervalInBackground: false,
+    onSuccess: (data:any) => {
+      if (data.status === 'completed') {
+        toast.success(`Payment of KES ${data.amount_paid} completed successfully!`);
+      } else if (data.status === 'failed') {
+        toast.error('Payment failed. Please try again.');
+      } else if (data.status === 'cancelled') {
+        toast.error('Payment was cancelled.');
+      }
+    },
+  });
+};
+
+// Hook for payment analytics
+export const usePaymentAnalytics = () => {
+  return useQuery({
+    queryKey: ['payments', 'analytics'],
+    queryFn: async () => {
+      const [summary, payments] = await Promise.all([
+        billsService.getBillSummary(),
+        paymentService.getPayments({ ordering: '-payment_date', page_size: 100 }),
+      ]);
+
+      // Calculate analytics from the data
+      const completedPayments = payments.results.filter(p => p.payment_status === 'completed');
+      const monthlyPayments = completedPayments.reduce((acc:any, payment:any) => {
+        const month = new Date(payment.payment_date).toISOString().slice(0, 7); // YYYY-MM
+        acc[month] = (acc[month] || 0) + parseFloat(payment.amount_paid);
+        return acc;
+      }, {} as Record<string, number>);
+
+      return {
+        summary,
+        monthlyPayments: Object.entries(monthlyPayments).map(([month, amount]) => ({
+          month,
+          amount: amount,
+        })),
+        totalPayments: completedPayments.length,
+        averagePayment: completedPayments.length > 0 
+          ? (completedPayments.reduce((sum, p) => sum + parseFloat(p.amount_paid), 0) / completedPayments.length)
+          : 0,
+      };
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };

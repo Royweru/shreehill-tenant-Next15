@@ -63,7 +63,7 @@ interface UserStatus{
     is_staff:boolean;
     is_superuser:boolean;
    },
-   user:User,
+   profile:User,
    email_verified:boolean;
 }
 
@@ -87,13 +87,6 @@ interface CurrentUnit {
   rent_due_day: number;
 }
 
-interface BillsSummary {
-  current_balance: number;
-  overdue_amount: number;
-  total_bills: number;
-  pending_bills_count: number;
-  overdue_bills_count: number;
-}
 
 interface RecentBill {
   id: string;
@@ -166,22 +159,12 @@ interface Bill {
   created_at: string;
 }
 
-interface Payment {
-  id: string;
-  payment_reference: string;
-  amount_paid: number;
-  payment_method: string;
-  payment_date: string;
-  payment_status: string;
-  bill_description: string;
-  mpesa_receipt?: string;
-  transaction_id?: string;
-}
+
 
 interface MPesaPaymentRequest {
   bill_id: string;
   phone_number: string;
-  amount: number;
+  amount: any;
 }
 
 interface MPesaPaymentResponse {
@@ -199,20 +182,7 @@ interface MPesaPaymentResponse {
   error?: string;
 }
 
-interface PaymentStatus {
-  payment_id: string;
-  payment_reference: string;
-  status: string;
-  amount_paid: number;
-  payment_method: string;
-  mpesa_receipt?: string;
-  payment_date: string;
-  checkout_request_id?: string;
-  bill_id: string;
-  bill_number: string;
-  bill_balance_remaining: number;
-  notes?: string;
-}
+
 
 interface PropertyDetails {
   id: string;
@@ -242,3 +212,249 @@ interface UnitDetails {
   status: string;
   property: PropertyDetails;
 }
+
+interface Notification{
+  id:string,
+  recipient:User,
+  title:string,
+  message:string,
+  notification_type:NotificationType,
+  channel:NotificationChannel,
+  is_read:boolean,
+  is_sent:boolean,
+  send_at?:any,
+  metadata?:any,
+  created_at:any,
+  updated_at:any
+}
+
+type NotificationType= "rent_reminder" |"general" |"lease_expiry" |"maintenance" |"payment_confirmed"
+type NotificationChannel ="in_app" |"sms"|"whatsapp" |"email"
+
+
+interface Unit{
+  id:string,
+  property:Property,
+  property_id:string,
+  property_name:string,
+  unit_number:string,
+  unit_type:string,
+  floor_area:any,
+  bedrooms:number,
+  bathrooms:number,
+  rent_amount:any,
+  deposit_amount:any,
+  service_charge:any,
+  water_fee:any,
+  is_furnished:boolean,
+  features:string[],
+  status:UnitStatus,
+  current_tenant:{
+    id:string,
+    name:string,
+    email:string,
+    phone_number?:string,
+    tenancy_start_date?:any,
+    tenancy_end_date?:any,
+    monthly_rent?:any,
+    deposit_paid?:any,
+    is_tenant_active?:boolean
+  },
+  bills:Bill[]
+}
+
+type UnitStatus ="occupied" | "available"|"maintenance" | "reserved"
+
+interface Property{
+ id:string,
+ name:string,
+ address:string,
+ county:string,
+ city:string,
+ occupied_units:number,
+ available_units:number,
+ total_units:number,
+ is_active:boolean,
+ units:Unit[]
+}
+
+// types/billing.ts
+
+
+
+ interface Payment {
+  id: string;
+  payment_reference: string;
+  amount_paid: string; // Decimal as string
+  payment_method: 'mpesa' | 'bank_transfer' | 'cash' | 'card' | 'cheque';
+  payment_date: string; // ISO datetime string
+  payment_status: 'pending' | 'completed' | 'failed' | 'reversed';
+  tenant_name?: string;
+  bill_description?: string;
+  processed_by_name?: string;
+  mpesa_receipt?: string;
+  mpesa_phone?: string;
+  transaction_id?: string;
+  processing_fee?: string;
+  notes?: string;
+  created_at: string;
+  updated_at?: string;
+  // Detailed fields
+  bill?: Bill;
+  processed_by?: User;
+  webhook_data?: Record<string, any>;
+  checkout_request_id?: string;
+  merchant_request_id?: string;
+}
+
+ interface BillSummary {
+  current_balance: any; // Decimal as any
+  overdue_amount: any;
+  next_due_date?: any;
+  total_paid_this_year: any;
+  upcoming_bills: Bill[];
+  recent_payments: Payment[];
+  bill_counts: {
+    total: number;
+    pending: number;
+    overdue: number;
+    paid: number;
+  };
+}
+
+
+
+ interface MPesaPaymentResponse {
+  success: boolean;
+  payment_id?: string;
+  payment_reference?: string;
+  checkout_request_id?: string;
+  merchant_request_id?: string;
+  response_description?: string;
+  customer_message?: string;
+  amount?: string;
+  phone_number?: string;
+  bill_number?: string;
+  message?: string;
+  error?: string;
+  response_code?: string;
+}
+
+ interface PaymentStatus {
+  payment_id: string;
+  payment_reference: string;
+  status: 'pending' | 'completed' | 'failed' | 'reversed' | 'cancelled';
+  amount_paid: string;
+  payment_method: string;
+  mpesa_receipt?: string;
+  payment_date: string;
+  checkout_request_id?: string;
+  bill_id: string;
+  bill_number: string;
+  bill_balance_remaining: string;
+  notes?: string;
+}
+
+// Filter interfaces
+ interface BillFilters {
+  status?: string;
+  bill_type?: string;
+  due_date_from?: string;
+  due_date_to?: string;
+  search?: string;
+  page?: number;
+  page_size?: number;
+  ordering?: string;
+}
+
+ interface PaymentFilters {
+  payment_method?: string;
+  payment_status?: string;
+  date_from?: string;
+  date_to?: string;
+  search?: string;
+  page?: number;
+  page_size?: number;
+  ordering?: string;
+}
+
+// Pagination interface
+ interface PaginatedResponse<T> {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: T[];
+}
+
+// Dashboard stats
+ interface DashboardStats extends BillSummary {
+  payment_trends: {
+    month: string;
+    amount: string;
+  }[];
+  bill_type_breakdown: {
+    bill_type: string;
+    count: number;
+    total_amount: string;
+  }[];
+}
+
+// Form interfaces
+ interface PaymentFormData {
+  bill_id: string;
+  amount: number;
+  phone_number: string;
+}
+
+ interface BillSearchResult {
+  bills: Bill[];
+  total: number;
+  has_more: boolean;
+}
+
+ interface PaymentSearchResult {
+  payments: Payment[];
+  total: number;
+  has_more: boolean;
+}
+
+// Constants
+ BILL_TYPES = {
+  rent: 'Rent',
+  service_charge: 'Service Charge',
+  utility: 'Utility',
+  penalty: 'Late Penalty',
+  deposit: 'Security Deposit',
+  other: 'Other'
+} as const;
+
+ BILL_STATUS = {
+  pending: 'Pending',
+  paid: 'Paid',
+  overdue: 'Overdue',
+  cancelled: 'Cancelled',
+  partial: 'Partially Paid'
+} as const;
+
+ PAYMENT_METHODS = {
+  mpesa: 'M-Pesa',
+  bank_transfer: 'Bank Transfer',
+  cash: 'Cash',
+  card: 'Card Payment',
+  cheque: 'Cheque'
+} as const;
+
+PAYMENT_STATUS = {
+  pending: 'Pending',
+  completed: 'Completed',
+  failed: 'Failed',
+  reversed: 'Reversed',
+  cancelled: 'Cancelled'
+} as const;
+
+
+type PriorityColors ='normal'|'urgent' |'high' |'low'
+
+type StatusColors ='completed'|'pending' |'overdue' 
+
+type IconTypes ='payment_success'|'payment_failed' |'maintenance_scheduled'|'rent_reminder' 

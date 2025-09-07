@@ -1,38 +1,40 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/services/authServices';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-hot-toast'; // Optional: for notifications
+import { toast } from 'react-hot-toast';
 import { handleDjangoError } from '@/lib/utils';
+
 
 export function useAuth() {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  // Get current user
+  // Get current user - FIXED: queryFn should call the function
   const {
     data: user,
     isLoading: isLoadingUser,
     error: userError,
-  } = useQuery<User>({
+  } = useQuery<UserStatus>({
     queryKey: ['user'], 
-    queryFn: authService.getCurrentUser,
+    queryFn: () => authService.getCurrentUser(), // Fixed: Call the function
     enabled: authService.isAuthenticated(),
     retry: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Register mutation
   const registerMutation = useMutation({
     mutationFn: authService.register,
     onSuccess: (data) => {
-      toast?.success('Registration successful! Please check your email to verify your account.');
+      toast.success('Registration successful! Please check your email to verify your account.');
       router.push('/auth/check-email');
     },
     onError: (error: any) => {
-     const message = handleDjangoError(error);
-      toast?.error(message);
+      const message = handleDjangoError(error);
+      toast.error(message);
     },
   });
- 
+
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: authService.login,
@@ -45,7 +47,7 @@ export function useAuth() {
     onError: (error: any) => {
       const message = handleDjangoError(error);
       console.error('Login error:', message);
-      toast?.error(message);
+      toast.error(message);
     },
   });
 
@@ -54,7 +56,7 @@ export function useAuth() {
     mutationFn: authService.logout,
     onSuccess: () => {
       queryClient.clear();
-      toast?.success('Logged out successfully');
+      toast.success('Logged out successfully');
       router.push('/auth/login');
     },
     onError: (error: any) => {
@@ -67,29 +69,27 @@ export function useAuth() {
   });
 
   // Email verification mutation
-const verifyEmailMutation = useMutation({
+  const verifyEmailMutation = useMutation({
     mutationFn: authService.verifyEmail,
     onSuccess: (data) => {
-      toast?.success(data.message || 'Email verified successfully!');
+      toast.success(data.message || 'Email verified successfully!');
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (error: any) => {
-      const message =handleDjangoError(error);
+      const message = handleDjangoError(error);
       console.error('Email verification error:', message);
-      toast?.error(message);
+      toast.error(message);
     },
   });
 
   const resendVerificationMutation = useMutation({
     mutationFn: authService.resendEmailVerification,
     onSuccess: (data) => {
-      toast?.success(data.message || 'Verification email sent!');
+      toast.success(data.message || 'Verification email sent!');
     },
     onError: (error: any) => {
-      const message = error.response?.data?.error || 
-                    error.response?.data?.detail || 
-                    'Failed to send verification email';
-      toast?.error(message);
+      const message = handleDjangoError(error);
+      toast.error(message);
     },
   });
 
@@ -106,7 +106,7 @@ const verifyEmailMutation = useMutation({
     isVerifying: verifyEmailMutation.isPending,
     verificationError: verifyEmailMutation.isError,
     verifyEmail: verifyEmailMutation.mutate,
-    verificationData: verifyEmailMutation.data, // Add this to access success data
+    verificationData: verifyEmailMutation.data,
     resendVerification: resendVerificationMutation.mutate,
     isResending: resendVerificationMutation.isPending,
   };
