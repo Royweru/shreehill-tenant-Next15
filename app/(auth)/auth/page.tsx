@@ -255,14 +255,19 @@ function AuthPagesContent() {
                   Phone Number
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{color: '#666666'}} />
+                  <Phone className="absolute left-3 
+                  top-1/2 transform -translate-y-1/2 w-5 h-5"
+                   style={{color: '#666666'}}
+                    />
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     disabled={isLoggingIn || isRegistering}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all text-neutral-800 disabled:opacity-50 disabled:pointer-events-none"
+                    className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none
+                     focus:ring-2 transition-all text-neutral-800 disabled:opacity-50 
+                     disabled:pointer-events-none"
                     style={{
                       borderColor: '#E5E1D8',
                       backgroundColor: '#FFFFFF'
@@ -286,7 +291,12 @@ function AuthPagesContent() {
                   value={formData.email}
                   onChange={handleInputChange}
                   disabled={isLoggingIn || isRegistering}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all text-neutral-800 disabled:opacity-50 disabled:pointer-events-none ${
+                  className={`w-full pl-10 pr-4 py-3
+                     border rounded-lg focus:outline-none 
+                     focus:ring-2 transition-all 
+                     text-neutral-800
+                      disabled:opacity-50 
+                      disabled:pointer-events-none ${
                     showVerificationSuccess ? 'bg-green-50 border-green-300' : ''
                   }`}
                   style={{
