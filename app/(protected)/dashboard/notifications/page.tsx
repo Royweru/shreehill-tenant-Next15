@@ -1,7 +1,9 @@
 import React from 'react'
 
-export const NotificationsPage = () => {
+const NotificationsPage = () => {
   return (
     <div>NotificationsPage</div>
   )
 }
+
+export default NotificationsPage

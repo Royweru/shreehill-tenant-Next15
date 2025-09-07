@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   Home, CreditCard, Bell, Wallet, Calendar, 
   AlertCircle, CheckCircle, Clock, Smartphone, 
-  RefreshCw, Building2, User, TrendingUp, 
+  RefreshCw, Building2,  TrendingUp, 
   DollarSign, FileText, Eye, EyeOff, X,
   Wrench, Download, MessageSquare, Settings,
   AlertTriangle
