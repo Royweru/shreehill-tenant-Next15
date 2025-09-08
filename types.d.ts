@@ -213,23 +213,6 @@ interface UnitDetails {
   property: PropertyDetails;
 }
 
-interface Notification{
-  id:string,
-  recipient:User,
-  title:string,
-  message:string,
-  notification_type:NotificationType,
-  channel:NotificationChannel,
-  is_read:boolean,
-  is_sent:boolean,
-  send_at?:any,
-  metadata?:any,
-  created_at:any,
-  updated_at:any
-}
-
-type NotificationType= "rent_reminder" |"general" |"lease_expiry" |"maintenance" |"payment_confirmed"
-type NotificationChannel ="in_app" |"sms"|"whatsapp" |"email"
 
 
 interface Unit{
@@ -458,3 +441,68 @@ type PriorityColors ='normal'|'urgent' |'high' |'low'
 type StatusColors ='completed'|'pending' |'overdue' 
 
 type IconTypes ='payment_success'|'payment_failed' |'maintenance_scheduled'|'rent_reminder' 
+
+//Notifications
+
+ interface NotificationSummary {
+  total_notifications: number;
+  unread_count: number;
+  urgent_count: number;
+  recent_count: number;
+  payment_notifications: number;
+  maintenance_notifications: number;
+}
+
+ interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  notification_type:NotificationType;
+  channel: NotificationChannel;
+  priority_level: NotificationPriorityLevel;
+  status:NotificationStatus;
+  is_read: boolean;
+  sender_name?: string;
+  action_url?: string;
+  action_text?: string;
+  time_ago: string;
+  created_at: string;
+  read_at?: string;
+  metadata?: Record<string, any>;
+}
+
+ interface NotificationsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Notification[];
+}
+
+ interface NotificationPreferences {
+  rent_reminder_channels: string[];
+  payment_channels: string[];
+  maintenance_channels: string[];
+  general_channels: string[];
+  emergency_channels: string[];
+  quiet_hours_start: string;
+  quiet_hours_end: string;
+  timezone: string;
+  whatsapp_number?: string;
+  email_enabled: boolean;
+  sms_enabled: boolean;
+  whatsapp_enabled: boolean;
+  push_enabled: boolean;
+}
+
+type NotificationType=  'rent_reminder' | 'payment_success' | 'payment_failed' | 
+    'lease_expiry' | 'maintenance_scheduled' | 'maintenance_completed' | 
+    'bill_generated' | 'overdue_payment' | 'welcome' | 'general' | 
+    'emergency' | 'community';
+type NotificationPriorityLevel = 'low' | 'normal' | 'high' | 'urgent';
+type NotificationStatus ='pending' | 'sent' | 'delivered' | 'failed' | 'cancelled';
+enum NotificationChannel {
+  IN_APP ='in_app',
+  SMS ='sms',
+  EMAIL ='email',
+  PUSH = 'push'
+}

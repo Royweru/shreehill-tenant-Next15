@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { 
   Home, CreditCard, Bell, Wallet, Calendar, 
   AlertCircle, CheckCircle, Clock, Smartphone, 
@@ -16,167 +16,11 @@ import { MaintenanceModal } from '@/components/modals/maintenanceModal';
 import { useBills, useBillSummary } from '@/hooks/useBills';
 import { useMpesaPaymentModal } from '@/modalHooks/useMpesaPaymentModal';
 import { useAuth } from '@/hooks/useAuth';
-import { useRecentPayments } from '@/hooks/usePayments';
-
-
-
-// Enhanced notification component for tenant dashboard
-const NotificationCenter = () => {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'payment_success',
-      title: 'Payment Confirmed',
-      message: 'Your rent payment of KES 45,000 has been confirmed',
-      priority: 'normal',
-      isRead: false,
-      timeAgo: '2 hours ago',
-      actionUrl: '/payments/receipt/123'
-    },
-    {
-      id: 2,
-      type: 'maintenance_scheduled',
-      title: 'Maintenance Scheduled',
-      message: 'Plumbing repair scheduled for tomorrow 10 AM',
-      priority: 'high',
-      isRead: false,
-      timeAgo: '5 hours ago',
-      actionUrl: '/maintenance/456'
-    }
-  ]);
-
-  const [showAll, setShowAll] = useState(false);
-
-  const getPriorityColor = (priority:any) => {
-    const colors = {
-      urgent: 'text-red-600 bg-red-50 border-red-200',
-      high: 'text-orange-600 bg-orange-50 border-orange-200',
-      normal: 'text-blue-600 bg-blue-50 border-blue-200',
-      low: 'text-gray-600 bg-gray-50 border-gray-200'
-    };
-    return colors[priority as PriorityColors] || colors.normal;
-  };
-
-  const getIcon = (type:any) => {
-    const icons = {
-      payment_success: <CreditCard className="h-5 w-5 text-green-600" />,
-      payment_failed: <AlertTriangle className="h-5 w-5 text-red-600" />,
-      maintenance_scheduled: <Wrench className="h-5 w-5 text-blue-600" />,
-      rent_reminder: <Calendar className="h-5 w-5 text-orange-600" />
-    };
-    return icons[type as IconTypes] || <Bell className="h-5 w-5 text-gray-600" />;
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Bell className="h-5 w-5" />
-          Recent Updates
-        </h3>
-        <button 
-          onClick={() => setShowAll(!showAll)}
-          className="text-sm text-blue-600 hover:text-blue-700"
-        >
-          {showAll ? 'Show Less' : 'View All'}
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {notifications.slice(0, showAll ? notifications.length : 3).map((notification) => (
-          <div 
-            key={notification.id}
-            className={`p-3 rounded-lg border ${notification.isRead ? 'bg-gray-50' : 'bg-white'} ${getPriorityColor(notification.priority)}`}
-          >
-            <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 mt-0.5">
-                {getIcon(notification.type)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <p className={`text-sm font-medium ${notification.isRead ? 'text-gray-600' : 'text-gray-900'}`}>
-                    {notification.title}
-                  </p>
-                  <span className="text-xs text-gray-500">{notification.timeAgo}</span>
-                </div>
-                <p className={`text-sm ${notification.isRead ? 'text-gray-500' : 'text-gray-700'}`}>
-                  {notification.message}
-                </p>
-                {notification.actionUrl && (
-                  <button className="text-xs text-blue-600 hover:text-blue-700 mt-2">
-                    View Details →
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-
-
-// Payment Status Tracker
-const PaymentTracker = () => {
-  const [payments, setPayments] = useState([
-    {
-      id: 1,
-      description: 'December 2024 Rent',
-      amount: 45000,
-      dueDate: '2024-12-01',
-      status: 'completed',
-      paidDate: '2024-11-28',
-      method: 'M-Pesa',
-      receipt: 'QKL8X9Y2'
-    },
-    {
-      id: 2,
-      description: 'January 2025 Rent',
-      amount: 45000,
-      dueDate: '2025-01-01',
-      status: 'overdue',
-      daysOverdue: 4
-    }
-  ]);
-
-  const getStatusColor = (status:string) => {
-    const colors = {
-      completed: 'text-green-600 bg-green-100',
-      pending: 'text-yellow-600 bg-yellow-100',
-      overdue: 'text-red-600 bg-red-100'
-    };
-    return colors[status as StatusColors] || 'text-gray-600 bg-gray-100';
-  };
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment History</h3>
-      <div className="space-y-3">
-        {payments.map((payment) => (
-          <div key={payment.id} className="flex items-center justify-between p-3 border rounded-lg">
-            <div className="flex-1">
-              <p className="font-medium text-gray-900">{payment.description}</p>
-              <p className="text-sm text-gray-600">
-                Due: {new Date(payment.dueDate).toLocaleDateString()}
-                {payment.status === 'overdue' && (
-                  <span className="text-red-600 ml-2">({payment.daysOverdue} days overdue)</span>
-                )}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold text-gray-900">KES {payment.amount.toLocaleString()}</p>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(payment.status)}`}>
-                {payment.status.charAt(0).toUpperCase() + payment.status.slice(1)}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
+import { usePayments, useRecentPayments } from '@/hooks/usePayments';
+import { NotificationCenter } from '@/components/dashboard/notificationsCenter';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { useNotificationSummary, useUnreadCount } from '@/hooks/useNotifications';
 
 // Fixed QuickStats Component
 const QuickStats = ({ billsSummary }:{billsSummary:BillSummary|undefined}) => {
@@ -646,16 +490,17 @@ const PaymentTrends = ({ paymentSummary }:{paymentSummary:any[]}) => {
 // Main Dashboard Component
 const TenantDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const {isOpen:showPaymentModal,onClose:paymentModalOnClose,onOpen:paymentModalOnOpen}=useMpesaPaymentModal()
+  const { isOpen: showPaymentModal, onClose: paymentModalOnClose, onOpen: paymentModalOnOpen } = useMpesaPaymentModal();
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showDocuments, setShowDocuments] = useState(false);
 
-  const {data:bills}=useBills()
-  const {data:billsSummary} =useBillSummary()
-  const {data:recentPayments}= useRecentPayments()
-  const {user}=useAuth()
-  const data = mockDashboardData;
+  // Data hooks
+  const { data: bills } = useBills();
+  const { data: billsSummary } = useBillSummary();
+  const { data: recentPayments } = useRecentPayments();
+  const { data: notificationSummary } = useNotificationSummary();
+  const { data: unreadCount } = useUnreadCount();
+  const { user } = useAuth();
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -664,130 +509,227 @@ const TenantDashboard = () => {
 
   const handlePaymentSuccess = () => {
     handleRefresh();
-    paymentModalOnClose()
+    paymentModalOnClose();
   };
 
-  // FIXED: Simple loading check without hydration mismatch
-  if (!data) {
+  // Mock data for missing fields - replace with real data when available
+  const mockTenantData = {
+    current_unit: {
+      unit_number: 'A12',
+      property_name: 'Shreehill Gardens'
+    },
+    is_tenancy_active: true
+  };
+
+  if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                {user?.profile.profile_image ? (
-                  <img 
-                    src={user?.profile.profile_image} 
-                    alt="Profile" 
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+    <div className="space-y-6">
+      {/* Enhanced Header with Real Notification Count */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-xl shadow-sm border p-6"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              {user?.profile?.profile_image ? (
+                <img 
+                  src={user.profile.profile_image} 
+                  alt="Profile" 
+                  className="w-16 h-16 rounded-xl object-cover shadow-md"
+                />
+              ) : (
+                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  {user?.profile?.first_name?.charAt(0)}{user?.profile?.last_name?.charAt(0)}
+                </div>
+              )}
+              {mockTenantData.is_tenancy_active && (
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-md"></div>
+              )}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-blue-600 bg-clip-text text-transparent">
+                Welcome back, {user?.profile?.first_name || 'Tenant'}!
+              </h1>
+              <p className="text-gray-600 flex items-center gap-2 mt-1">
+                {mockTenantData.current_unit ? (
+                  <>
+                    <Building2 className="h-4 w-4" />
+                    Unit {mockTenantData.current_unit.unit_number} • {mockTenantData.current_unit.property_name}
+                    {mockTenantData.is_tenancy_active && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                        Active Lease
+                      </span>
+                    )}
+                  </>
                 ) : (
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {data.tenant_info.name.split(' ').map(n => n[0]).join('')}
-                  </div>
+                  <span className="text-orange-600">No unit assigned</span>
                 )}
-                {data.is_tenancy_active && (
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                )}
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Welcome back, {user?.profile.full_name}!
-                </h1>
-                <p className="text-gray-600 flex items-center gap-2">
-                  {data.current_unit ? (
-                    <>
-                      <Building2 className="h-4 w-4" />
-                      Unit {data.current_unit.unit_number} • {data.current_unit.property_name}
-                      {data.is_tenancy_active && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Active Lease
-                        </span>
-                      )}
-                    </>
+              </p>
+              {notificationSummary && (
+                <p className="text-sm text-gray-500 mt-1">
+                  {notificationSummary.unread_count > 0 ? (
+                    <span className="text-emerald-600 font-medium">
+                      {notificationSummary.unread_count} new notification{notificationSummary.unread_count !== 1 ? 's' : ''}
+                    </span>
                   ) : (
-                    <span className="text-orange-600">No unit assigned</span>
+                    'All caught up!'
                   )}
                 </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button 
-                className="relative p-2 text-gray-400 hover:text-gray-600"
-                onClick={() => setShowNotifications(!showNotifications)}
-              >
-                <Bell className="h-6 w-6" />
-                {data.notifications.filter(n => !n.is_read).length > 0 && (
-                  <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
-                )}
-              </button>
-              
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                Refresh
-              </button>
+              )}
             </div>
           </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="relative p-3 rounded-xl hover:bg-emerald-50"
+              >
+                <Bell className="h-5 w-5 text-emerald-600" />
+                <AnimatePresence>
+                  {(unreadCount?.unread_count || 0) > 0 && (
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      exit={{ scale: 0 }}
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-medium shadow-md"
+                    >
+                      {(unreadCount?.unread_count || 0) > 9 ? '9+' : unreadCount?.unread_count}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </div>
+            
+            <Button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Alert Banner for Overdue Bills */}
+      <AnimatePresence>
+        {billsSummary?.overdue_amount && billsSummary.overdue_amount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: 'auto' }}
+            exit={{ opacity: 0, y: -20, height: 0 }}
+            className="bg-gradient-to-r from-red-50 to-orange-50 border border-red-200 rounded-xl p-4 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-100 rounded-full">
+                <AlertCircle className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-semibold text-red-800">Overdue Payment Alert</h4>
+                <p className="text-sm text-red-700 mt-1">
+                  You have {formatCurrency(billsSummary.overdue_amount)} in overdue payments. 
+                  Please settle these to avoid late fees.
+                </p>
+              </div>
+              <Button
+                onClick={paymentModalOnOpen}
+                className="bg-red-600 text-white hover:bg-red-700 shadow-md"
+              >
+                Pay Now
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Dashboard Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* Left Column - Main Content */}
+        <div className="xl:col-span-2 space-y-6">
+          {/* Quick Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <QuickStats billsSummary={billsSummary} />
+          </motion.div>
+
+          {/* Recent Bills */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <RecentBills bills={bills} />
+          </motion.div>
+
+          {/* Recent Payments */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <RecentPayments payments={recentPayments || []} />
+          </motion.div>
+        </div>
+
+        {/* Right Column - Sidebar */}
+        <div className="space-y-6">
+          {/* Real Notification Center */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <NotificationCenter maxItems={5} />
+          </motion.div>
+
+          {/* M-Pesa Payment Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <MpesaPaymentSection 
+              onPaymentSuccess={handlePaymentSuccess} 
+              showPaymentModal={showPaymentModal}
+              paymentModalOnClose={paymentModalOnClose}
+              paymentModalOnOpen={paymentModalOnOpen}
+              bills={bills}
+            />
+          </motion.div>
+
+          {/* Quick Actions */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <QuickActions 
+              onPaymentClick={paymentModalOnOpen}
+              onMaintenanceClick={() => setShowMaintenanceModal(true)}
+              onNotificationClick={() => window.location.href = '/dashboard/notifications'}
+              onDocumentsClick={() => setShowDocuments(true)}
+            />
+          </motion.div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4">
-        {/* Alert Banner for Overdue Bills */}
-        {billsSummary?.overdue_amount && billsSummary?.overdue_amount > 0 && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            <div className="flex-1">
-              <h4 className="font-medium text-red-800">Overdue Payment Alert</h4>
-              <p className="text-sm text-red-700">
-                You have {formatCurrency(data.bills_summary.overdue_amount)} in overdue payments. 
-                Please settle these to avoid late fees.
-              </p>
-            </div>
-            <button
-              onClick={paymentModalOnOpen}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 text-sm font-medium"
-            >
-              Pay Now
-            </button>
-          </div>
-        )}
-
-        {/* FIXED: QuickStats with no hydration issues */}
-        <QuickStats billsSummary={billsSummary} />
-         <RecentBills bills={bills}/>
-         <RecentPayments payments={(recentPayments||[])}/>
-         <MpesaPaymentSection 
-           onPaymentSuccess={handlePaymentSuccess} 
-           showPaymentModal={showPaymentModal}
-           paymentModalOnClose={paymentModalOnClose}
-           paymentModalOnOpen={paymentModalOnOpen}
-           bills={bills}
-         />
-        {/* Quick Actions */}
-        <QuickActions 
-          onPaymentClick={paymentModalOnOpen}
-          onMaintenanceClick={() => setShowMaintenanceModal(true)}
-          onNotificationClick={() => setShowNotifications(true)}
-          onDocumentsClick={() => setShowDocuments(true)}
-        />
-      </div>
-
-      {/* All your existing modals remain the same */}
+      {/* Modals */}
       <MaintenanceModal 
         isOpen={showMaintenanceModal}
         onClose={() => setShowMaintenanceModal(false)}
@@ -797,15 +739,20 @@ const TenantDashboard = () => {
         <MpesaPaymentModal
           isOpen={showPaymentModal}
           onClose={paymentModalOnClose}
-          bills={(bills?.results.filter((bill:Bill) => bill.balance_due > 0)|| [])}
+          bills={bills?.results?.filter((bill: any) => bill.balance_due > 0) || []}
           onSuccess={handlePaymentSuccess}
         />
       )}
 
       {/* Documents Modal */}
-      {showDocuments && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <Card className="max-w-md w-full p-6">
+      <AnimatePresence>
+        {showDocuments && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+ <Card className="max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">My Documents</h3>
               <button 
@@ -839,10 +786,12 @@ const TenantDashboard = () => {
               </button>
             </div>
           </Card>
+           </motion.div>
+        )}
+        </AnimatePresence>
         </div>
-      )}
-    </div>
-  );
-};
+)}
+
+            
 
 export default TenantDashboard;
