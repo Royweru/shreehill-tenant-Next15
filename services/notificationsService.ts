@@ -8,41 +8,41 @@ export const notificationsService = {
     notification_type?: string;
     priority_level?: string;
     search?: string;
-  }) => apiClient.get<NotificationsResponse>('/notifications/', { params }),
+  }) => apiClient.get<NotificationsResponse>('/api/notifications/', { params }),
 
   // Get single notification detail
   getNotification: (id: string) => 
-    apiClient.get<Notification>(`/notifications/${id}/`),
+    apiClient.get<Notification>(`/api/notifications/${id}/`),
 
   // Mark notification as read
   markNotificationAsRead: (notificationId: string) =>
-    apiClient.post(`/notifications/${notificationId}/mark_read/`),
+    apiClient.post(`/api/notifications/${notificationId}/mark_read/`),
 
   // Mark notification as unread
   markNotificationAsUnread: (notificationId: string) =>
-    apiClient.post(`/notifications/${notificationId}/mark_unread/`),
+    apiClient.post(`/api/notifications/${notificationId}/mark_unread/`),
 
   // Mark all notifications as read
   markAllNotificationsAsRead: () =>
-    apiClient.post('/notifications/mark_all_read/'),
+    apiClient.post('/api/notifications/mark_all_read/'),
 
   // Bulk actions on notifications
   bulkAction: (data: { notification_ids: string[]; action: 'mark_read' | 'mark_unread' | 'delete' }) =>
-    apiClient.post('/notifications/bulk_action/', data),
+    apiClient.post('/api/notifications/bulk_action/', data),
 
   // Get unread count
   getUnreadCount: () =>
-    apiClient.get<{ unread_count: number }>('/notifications/unread_count/'),
+    apiClient.get<{ unread_count: number }>('/api/notifications/unread_count/'),
 
   // Get notification summary for dashboard
   getSummary: () =>
-    apiClient.get<NotificationSummary>('/notifications/summary/'),
+    apiClient.get<NotificationSummary>('/api/notifications/summary/'),
 
   // Get notification preferences
   getPreferences: () =>
-    apiClient.get<NotificationPreferences>('/notifications/preferences/'),
+    apiClient.get<NotificationPreferences>('/api/notifications/preferences/'),
 
   // Update notification preferences
   updatePreferences: (preferences: Partial<NotificationPreferences>) =>
-    apiClient.put<NotificationPreferences>('/notifications/preferences/', preferences),
+    apiClient.put<NotificationPreferences>('/api/notifications/preferences/', preferences),
 };

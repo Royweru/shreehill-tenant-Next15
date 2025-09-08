@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient"
 export const unitsService ={
     getMyUnit: () =>
-    apiClient.get('/properties/units/my_unit/'),
+    apiClient.get('/api/assets/units/my_unit/'),
 
     
   searchUnits: (params: {
@@ -12,5 +12,5 @@ export const unitsService ={
     furnished?: boolean;
     has_parking?: boolean;
   }) =>
-    apiClient.get('/properties/units/search_units/', { params }),
+    apiClient.get('/api/assets/units/search_units/', { params }),
 }
