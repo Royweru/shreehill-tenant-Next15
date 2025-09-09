@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/apiClient"
 export const unitsService ={
     getMyUnit: () =>
-    apiClient.get('/api/assets/units/my_unit/'),
+    apiClient.get<Unit>('/api/assets/units/my_unit/'),
 
     
   searchUnits: (params: {

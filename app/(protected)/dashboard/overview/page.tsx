@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNotificationSummary, useUnreadCount } from '@/hooks/useNotifications';
 import { useRefreshDashboard } from '@/hooks/useTenantDashboard';
+import { useMyUnit } from '@/hooks/useProperty';
 
 // Fixed QuickStats Component
 const QuickStats = ({ billsSummary }:{billsSummary:BillSummary|undefined}) => {
@@ -494,19 +495,20 @@ const TenantDashboard = () => {
   const { isOpen: showPaymentModal, onClose: paymentModalOnClose, onOpen: paymentModalOnOpen } = useMpesaPaymentModal();
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showDocuments, setShowDocuments] = useState(false);
-
+ const {data:unitData}= useMyUnit()
   // Data hooks
   const { data: bills } = useBills();
   const { data: billsSummary } = useBillSummary();
   const { data: recentPayments } = useRecentPayments();
   const { data: notificationSummary } = useNotificationSummary();
+
   const{refresh}=useRefreshDashboard()
   const { user } = useAuth();
 
   const handleRefresh = async() => {
     setRefreshing(true);
     try {
-       refresh()
+       await refresh()
     } catch (error) {
       console.log(error)
     }finally{
@@ -519,14 +521,6 @@ const TenantDashboard = () => {
     paymentModalOnClose();
   };
 
-  // Mock data for missing fields - replace with real data when available
-  const mockTenantData = {
-    current_unit: {
-      unit_number: 'A12',
-      property_name: 'Shreehill Gardens'
-    },
-    is_tenancy_active: true
-  };
 
   if (!user) {
     return (
@@ -554,12 +548,14 @@ const TenantDashboard = () => {
                   className="w-16 h-16 rounded-xl object-cover shadow-md"
                 />
               ) : (
-                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
+                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 
+                rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
                   {user?.first_name?.charAt(0)}{user?.last_name?.charAt(0)}
                 </div>
               )}
-              {mockTenantData.is_tenancy_active && (
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white shadow-md"></div>
+              {user.is_active && (
+                <div className="absolute -bottom-1 -right-1 w-5 h-5
+                 bg-green-500 rounded-full border-2 border-white shadow-md"></div>
               )}
             </div>
             <div>
@@ -567,11 +563,11 @@ const TenantDashboard = () => {
                 Welcome back, {user?.first_name || 'Tenant'}!
               </h1>
               <p className="text-gray-600 flex items-center gap-2 mt-1">
-                {mockTenantData.current_unit ? (
+                {unitData ? (
                   <>
                     <Building2 className="h-4 w-4" />
-                    Unit {mockTenantData.current_unit.unit_number} • {mockTenantData.current_unit.property_name}
-                    {mockTenantData.is_tenancy_active && (
+                    Unit {unitData?.unit_number} • {unitData?.property_name}
+                    {user.is_active && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                         Active Lease
                       </span>
