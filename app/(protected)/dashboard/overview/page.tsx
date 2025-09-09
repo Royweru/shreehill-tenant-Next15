@@ -21,6 +21,7 @@ import { NotificationCenter } from '@/components/dashboard/notificationsCenter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNotificationSummary, useUnreadCount } from '@/hooks/useNotifications';
+import { useRefreshDashboard } from '@/hooks/useTenantDashboard';
 
 // Fixed QuickStats Component
 const QuickStats = ({ billsSummary }:{billsSummary:BillSummary|undefined}) => {
@@ -499,12 +500,18 @@ const TenantDashboard = () => {
   const { data: billsSummary } = useBillSummary();
   const { data: recentPayments } = useRecentPayments();
   const { data: notificationSummary } = useNotificationSummary();
-  const { data: unreadCount } = useUnreadCount();
+  const{refresh}=useRefreshDashboard()
   const { user } = useAuth();
 
-  const handleRefresh = () => {
+  const handleRefresh = async() => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
+    try {
+       refresh()
+    } catch (error) {
+      console.log(error)
+    }finally{
+      setRefreshing(false)
+    }
   };
 
   const handlePaymentSuccess = () => {

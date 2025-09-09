@@ -1,3 +1,4 @@
+import { billQueryKeys, dashboardQueryKeys, paymentQueryKeys } from "@/lib/queryKeys";
 import { tenantQueryKeys } from "@/lib/utils";
 import { paymentService } from "@/services/paymentServices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,9 +13,9 @@ export const useMpesaPayment = () => {
       console.log('Hook: Payment success callback with data:', data);
       if (data?.success) {
         toast.success('M-Pesa payment initiated successfully! Check your phone for the STK push.');
-        queryClient.invalidateQueries({ queryKey: tenantQueryKeys.dashboard });
-        queryClient.invalidateQueries({ queryKey: tenantQueryKeys.bills.all });
-        queryClient.invalidateQueries({ queryKey: tenantQueryKeys.payments.all });
+        queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.dashboard });
+        queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
+        queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all });
       } else {
         toast.error(data?.error || 'Payment initiation failed');
       }
@@ -32,7 +33,7 @@ export const useMpesaPayment = () => {
 
 export const usePaymentStatus = (paymentId: string, enabled: boolean = true) => {
   return useQuery({
-    queryKey: tenantQueryKeys.payments.status(paymentId),
+    queryKey: paymentQueryKeys.status(paymentId),
     queryFn: () => paymentService.checkPaymentStatus(paymentId),
     enabled: enabled && !!paymentId,
     refetchInterval: (data:any) => {

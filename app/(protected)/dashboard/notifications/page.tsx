@@ -36,7 +36,7 @@ import { cn } from '@/lib/utils';
 const NotificationsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedPriority, setSelectedPriority] = useState('');
+  const [selectedPriority, setSelectedPriority] = useState('all'); // Changed from empty string
   const [showSettings, setShowSettings] = useState(false);
 
   const { data: summary, isLoading: summaryLoading } = useNotificationSummary();
@@ -346,7 +346,7 @@ const NotificationsPage = () => {
                 <SelectValue placeholder="Priority" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All</SelectItem>
+                <SelectItem value="all">All</SelectItem>
                 <SelectItem value="urgent">Urgent</SelectItem>
                 <SelectItem value="high">High</SelectItem>
                 <SelectItem value="normal">Normal</SelectItem>

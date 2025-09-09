@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { paymentService } from '@/services/paymentServices';
-import { billQueryKeys, paymentQueryKeys } from '@/lib/queryKeys';
+import { billQueryKeys, dashboardQueryKeys, paymentQueryKeys } from '@/lib/queryKeys';
 import { billsService } from '@/services/billsService';
 
 // Add type imports - you'll need to uncomment these in your service file
@@ -121,12 +121,12 @@ export const usePaymentOperations = () => {
   const refreshPaymentData = () => {
     queryClient.invalidateQueries({ queryKey: paymentQueryKeys.all });
     queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey:dashboardQueryKeys.dashboard });
   };
 
   const refreshBillData = () => {
     queryClient.invalidateQueries({ queryKey: billQueryKeys.all });
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey:dashboardQueryKeys.dashboard });
   };
 
   return {
