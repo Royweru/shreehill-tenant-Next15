@@ -352,7 +352,14 @@ const RecentPayments = ({ payments }:{payments:Payment[]}) => (
 );
 
 // Unit Info Component
-const UnitInfo = ({ unit }:{unit:Unit}) => (
+const UnitInfo = ({ 
+  unit 
+}:{
+  unit:Unit|undefined
+}) => {
+  if(!unit) return
+  
+  return(
   <Card className="p-6">
     <div className="flex items-center gap-3 mb-6">
       <div className="p-2 bg-indigo-100 rounded-lg">
@@ -395,7 +402,8 @@ const UnitInfo = ({ unit }:{unit:Unit}) => (
       </div>
     </div>
   </Card>
-);
+  )
+}
 
 // Notifications Component
 const NotificationsList = ({ notifications }:{notifications:Notification[]}) => (
@@ -448,8 +456,8 @@ const NotificationsList = ({ notifications }:{notifications:Notification[]}) => 
 );
 
 // Payment Trends Chart Component
-const PaymentTrends = ({ paymentSummary }:{paymentSummary:any[]}) => {
-  const maxAmount = Math.max(...paymentSummary.map(item => item.total_paid));
+const PaymentTrends = ({ paymentSummary }:{paymentSummary:any}) => {
+  const maxAmount = Math.max(...paymentSummary.map((item:any) => item.total_paid));
   
   return (
     <Card className="p-6">
@@ -464,7 +472,7 @@ const PaymentTrends = ({ paymentSummary }:{paymentSummary:any[]}) => {
       </div>
 
       <div className="space-y-4">
-        {paymentSummary.map((month, index) => (
+        {paymentSummary.map((month:any, index:number) => (
           <div key={month.month} className="flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1">
               <p className="text-sm font-medium text-gray-700 w-24">{month.month_name.split(' ')[0]}</p>
@@ -674,7 +682,16 @@ const TenantDashboard = () => {
             <RecentPayments payments={recentPayments || []} />
           </motion.div>
         </div>
+               <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
 
+            <UnitInfo 
+             unit={unitData}
+            />
+          </motion.div>
         {/* Right Column - Sidebar */}
         <div className="space-y-6 xl:col-span-2">
           {/* Real Notification Center */}

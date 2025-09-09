@@ -1,3 +1,7 @@
+export const userQueryKeys={
+  user:['user'] as const
+}
+
 export const paymentQueryKeys = {
   all: ['payments'] as const,
   lists: () => [...paymentQueryKeys.all, 'list'] as const,
@@ -6,7 +10,7 @@ export const paymentQueryKeys = {
   detail: (id: string) => [...paymentQueryKeys.details(), id] as const,
   recent: () => [...paymentQueryKeys.all, 'recent'] as const,
   infinite:(filters?:PaymentFilters)=>[...paymentQueryKeys.all,'infinite', filters] as const,
-  analytics:()=>[...paymentQueryKeys.all, 'analytics'],
+  analytics:()=>[...paymentQueryKeys.all, 'analytics'] as const,
   status: (id: string) => [...paymentQueryKeys.all, 'status', id] as const,
 };
 

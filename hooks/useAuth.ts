@@ -3,6 +3,7 @@ import { authService } from '@/services/authServices';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { handleDjangoError } from '@/lib/utils';
+import { userQueryKeys } from '@/lib/queryKeys';
 
 
 export function useAuth() {
@@ -15,7 +16,7 @@ export function useAuth() {
     isLoading: isLoadingUser,
     error: userError,
   } = useQuery<UserProfile>({
-    queryKey: ['user'], 
+    queryKey: userQueryKeys.user, 
     queryFn: () => authService.getCurrentUser(), // Fixed: Call the function
     enabled: authService.isAuthenticated(),
     retry: false,
