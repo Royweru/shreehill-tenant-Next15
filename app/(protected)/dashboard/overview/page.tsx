@@ -492,7 +492,11 @@ const PaymentTrends = ({ paymentSummary }:{paymentSummary:any[]}) => {
 // Main Dashboard Component
 const TenantDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const { isOpen: showPaymentModal, onClose: paymentModalOnClose, onOpen: paymentModalOnOpen } = useMpesaPaymentModal();
+  const { 
+    isOpen: showPaymentModal,
+     onClose: paymentModalOnClose, 
+     onOpen: paymentModalOnOpen 
+    } = useMpesaPaymentModal();
   const [showMaintenanceModal, setShowMaintenanceModal] = useState(false);
   const [showDocuments, setShowDocuments] = useState(false);
  const {data:unitData}= useMyUnit()

@@ -5,6 +5,8 @@ export const paymentQueryKeys = {
   details: () => [...paymentQueryKeys.all, 'detail'] as const,
   detail: (id: string) => [...paymentQueryKeys.details(), id] as const,
   recent: () => [...paymentQueryKeys.all, 'recent'] as const,
+  infinite:(filters?:PaymentFilters)=>[...paymentQueryKeys.all,'infinite', filters] as const,
+  analytics:()=>[...paymentQueryKeys.all, 'analytics'],
   status: (id: string) => [...paymentQueryKeys.all, 'status', id] as const,
 };
 

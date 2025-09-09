@@ -138,7 +138,7 @@ export const usePaymentOperations = () => {
 // Fixed: Hook for infinite scrolling payments - using useInfiniteQuery
 export const useInfinitePayments = (filters?: PaymentFilters) => {
   return useInfiniteQuery({
-    queryKey: ['payments', 'infinite', filters],
+    queryKey: paymentQueryKeys.infinite(filters),
     queryFn: async ({ pageParam }: { pageParam: number }) => {
       const response = await paymentService.getPayments({
         ...filters,
@@ -190,7 +190,7 @@ export const usePaymentAnalytics = () => {
     totalPayments: number;
     averagePayment: number;
   }>({
-    queryKey: ['payments', 'analytics'],
+    queryKey: paymentQueryKeys.analytics(),
     queryFn: async () => {
       const [summary, payments] = await Promise.all([
         billsService.getBillSummary(),
@@ -213,7 +213,8 @@ export const usePaymentAnalytics = () => {
         })),
         totalPayments: completedPayments.length,
         averagePayment: completedPayments.length > 0 
-          ? (completedPayments.reduce((sum: number, p: Payment) => sum + parseFloat(p.amount_paid), 0) / completedPayments.length)
+          ? (completedPayments.reduce((sum: number, p: Payment) => sum + parseFloat(p.amount_paid), 0) / 
+          completedPayments.length)
           : 0,
       };
     },
