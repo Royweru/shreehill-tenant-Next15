@@ -57,7 +57,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   const markAllAsReadMutation = useMarkAllNotificationsAsRead();
   const bulkActionMutation = useBulkNotificationAction();
 
-  const notifications = notificationsData?.results || [];
+  const notifications = notificationsData || [];
   const displayNotifications = showAll ? notifications : notifications.slice(0, maxItems);
 
   const getNotificationIcon = (type: string) => {
@@ -183,7 +183,8 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <div className="relative">
               <Bell className="h-6 w-6 text-emerald-600" />
               {summary && summary?.unread_count > 0 && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 
+                rounded-full text-xs text-white flex items-center justify-center">
                   {summary.unread_count > 9 ? '9+' : summary.unread_count}
                 </span>
               )}

@@ -11,7 +11,7 @@ import {
 import { MpesaPaymentModal } from '@/components/modals/mpesaPaymentModal';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Card } from '@/components/dashboard/dashboardCard';
-import { mockDashboardData } from '@/constants';
+
 import { MaintenanceModal } from '@/components/modals/maintenanceModal';
 import { useBills, useBillSummary } from '@/hooks/useBills';
 import { useMpesaPaymentModal } from '@/modalHooks/useMpesaPaymentModal';
@@ -578,7 +578,8 @@ const TenantDashboard = () => {
                 <p className="text-sm text-gray-500 mt-1">
                   {notificationSummary.unread_count > 0 ? (
                     <span className="text-emerald-600 font-medium">
-                      {notificationSummary.unread_count} new notification{notificationSummary.unread_count !== 1 ? 's' : ''}
+                      {notificationSummary.unread_count} 
+                      new notification{notificationSummary.unread_count !== 1 ? 's' : ''}
                     </span>
                   ) : (
                     'All caught up!'
@@ -589,27 +590,7 @@ const TenantDashboard = () => {
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="relative p-3 rounded-xl hover:bg-emerald-50"
-              >
-                <Bell className="h-5 w-5 text-emerald-600" />
-                <AnimatePresence>
-                  {(unreadCount?.unread_count || 0) > 0 && (
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-medium shadow-md"
-                    >
-                      {(unreadCount?.unread_count || 0) > 9 ? '9+' : unreadCount?.unread_count}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </Button>
-            </div>
+      
             
             <Button
               onClick={handleRefresh}
@@ -656,7 +637,7 @@ const TenantDashboard = () => {
       </AnimatePresence>
 
       {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Left Column - Main Content */}
         <div className="xl:col-span-2 space-y-6">
           {/* Quick Stats */}
@@ -688,7 +669,7 @@ const TenantDashboard = () => {
         </div>
 
         {/* Right Column - Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-6 xl:col-span-2">
           {/* Real Notification Center */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -752,7 +733,7 @@ const TenantDashboard = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
- <Card className="max-w-md w-full p-6">
+                 <Card className="max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">My Documents</h3>
               <button 

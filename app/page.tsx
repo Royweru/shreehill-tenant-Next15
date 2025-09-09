@@ -9,21 +9,22 @@ import {
   ArrowRight, 
   Shield, 
   Smartphone, 
-  Clock,
   CheckCircle,
   Star,
   MapPin,
   Phone,
   Mail,
-  ChevronDown,
   Menu,
   X
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useAuthContext } from '@/providers/AuthContext';
 
 const ShreehillLanding = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const {isAuthenticated}=useAuthContext()
+  const router =useRouter()
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
@@ -97,26 +98,47 @@ const ShreehillLanding = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-charcoal hover:text-brand-primary transition-colors">
+              <a href="#features" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
                 Features
               </a>
-              <a href="#testimonials" className="text-charcoal hover:text-brand-primary transition-colors">
+              <a href="#testimonials" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
                 Testimonials
               </a>
-              <a href="#contact" className="text-charcoal hover:text-brand-primary transition-colors">
+              <a href="#contact" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
                 Contact
               </a>
             </div>
 
             {/* Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-4">
-              <button className="text-charcoal hover:text-brand-primary transition-colors font-medium">
-                Sign In
+            {isAuthenticated?(
+              <>
+                 <div className="hidden md:flex items-center space-x-4">
+                   <button
+               className="bg-brand-primary text-cream px-6 py-2
+                rounded-lg hover:bg-trust-blue transition-colors
+                 font-medium shadow-elegant"
+                 onClick={()=>router.push('/dashboard/overview/')}
+                 >
+                Go to dashboard
               </button>
-              <button className="bg-brand-primary text-cream px-6 py-2 rounded-lg hover:bg-trust-blue transition-colors font-medium shadow-elegant">
+                 </div>
+              </>
+            ):(
+              <>
+                   <div className="hidden md:flex items-center space-x-4">
+              
+              <button
+               className="bg-brand-primary text-cream px-6 py-2
+                rounded-lg hover:bg-trust-blue transition-colors
+                 font-medium shadow-elegant"
+                 onClick={()=>router.push('/auth')}
+                 >
                 Get Started
               </button>
             </div>
+              </>
+            )}
+        
 
             {/* Mobile Menu Button */}
             <button 
@@ -422,7 +444,8 @@ const ShreehillLanding = () => {
                 Stay connected for updates and property news.
               </p>
               <div className="flex space-x-4">
-                <a href="https://www.facebook.com/ShreeHillEstates/" target="_blank" rel="noopener noreferrer" className="text-cream/70 hover:text-cream transition-colors">
+                <a href="https://www.facebook.com/ShreeHillEstates/" target="_blank"
+                 rel="noopener noreferrer" className="text-cream/70 hover:text-cream transition-colors">
                   Facebook
                 </a>
               </div>

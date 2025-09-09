@@ -8,7 +8,7 @@ export const notificationsService = {
     notification_type?: string;
     priority_level?: string;
     search?: string;
-  }) => apiClient.get<NotificationsResponse>('/api/messages/notifications/', { params }),
+  }) => apiClient.get<Notification[]>('/api/messages/notifications/', { params }),
 
   // Get single notification detail
   getNotification: (id: string) => 
