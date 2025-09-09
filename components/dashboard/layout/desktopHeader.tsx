@@ -40,7 +40,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
   const markAsReadMutation = useMarkNotificationAsRead();
   const markAllAsReadMutation = useMarkAllNotificationsAsRead();
 
-  const notifications = notificationsData?.results?.slice(0, 5) || [];
+  const notifications = notificationsData?.slice(0, 5) || [];
   const unreadNotifications = notifications.filter(n => !n.is_read);
 
   // Close notifications dropdown when clicking outside
