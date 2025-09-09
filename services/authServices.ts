@@ -33,7 +33,9 @@ class AuthService {
     const response = await apiClient.get<UserProfile>('/api/users/profile/');
     return response;
   }
-
+ updateUserProfile= async (userData:Partial<UserProfile>) => {
+  const response = await apiClient.patch('/api/users/profile/', userData)
+ }
   getTokens = (): { access: string | null, refresh: string | null } => {
     return {
       access: Cookies.get('access_token') || null,

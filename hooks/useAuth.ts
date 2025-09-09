@@ -35,6 +35,18 @@ export function useAuth() {
     },
   });
 
+  //Update user profile mutation
+  const updateUserProfileMutation = useMutation({
+    mutationFn: (userData:any)=>authService.updateUserProfile(userData),
+    onSuccess: (data) => {
+      toast.success('User profile updated successfully');
+    },
+    onError: (error: any) => {
+      const message = handleDjangoError(error);
+      toast.error(message);
+    },
+  });
+
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: authService.login,
@@ -106,8 +118,9 @@ export function useAuth() {
     isVerifying: verifyEmailMutation.isPending,
     verificationError: verifyEmailMutation.isError,
     verifyEmail: verifyEmailMutation.mutate,
+    updateUserProfile:updateUserProfileMutation.mutateAsync,
     verificationData: verifyEmailMutation.data,
-    resendVerification: resendVerificationMutation.mutate,
+    resendVerification: resendVerificationMutation.mutateAsync,
     isResending: resendVerificationMutation.isPending,
   };
 }
