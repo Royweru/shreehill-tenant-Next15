@@ -17,7 +17,7 @@ interface DesktopHeaderProps {
   isScrolled: boolean;
   setShowNotifications: (show: boolean) => void;
   showNotifications: boolean;
-  user: any;
+  user: UserProfile|null;
   showProfile: boolean;
   setShowProfile: (show: boolean) => void;
 }
@@ -319,12 +319,12 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
           >
             <div className="w-10 h-10 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">
-                {user?.profile?.first_name?.charAt(0) || 'U'}{user?.profile?.last_name?.charAt(0) || 'S'}
+                {user?.first_name?.charAt(0) || 'U'}{user?.last_name?.charAt(0) || 'S'}
               </span>
             </div>
             <div className="text-left">
               <p className="text-sm font-medium text-gray-900">
-                {user?.profile?.first_name || 'User'} {user?.profile?.last_name || ''}
+                {user?.first_name || 'User'} {user?.last_name || ''}
               </p>
               <p className="text-xs text-gray-500">Tenant</p>
             </div>
@@ -338,14 +338,14 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-md">
                     <span className="text-white font-bold text-sm">
-                      {user?.profile.first_name?.charAt(0) || 'U'}{user?.profile.last_name?.charAt(0) || 'S'}
+                      {user?.first_name?.charAt(0) || 'U'}{user?.last_name?.charAt(0) || 'S'}
                     </span>
                   </div>
                   <div>
                     <p className="font-semibold text-gray-900">
-                      {user?.profile.first_name || 'User'} {user?.profile.last_name || ''}
+                      {user?.first_name || 'User'} {user?.last_name || ''}
                     </p>
-                    <p className="text-sm text-gray-500">{user?.profile.email || 'user@example.com'}</p>
+                    <p className="text-sm text-gray-500">{user?.email || 'user@example.com'}</p>
                   </div>
                 </div>
               </div>

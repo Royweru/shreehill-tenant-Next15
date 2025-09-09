@@ -5,9 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export const Sidebar = ({
-  onClose
+  onClose,
+  user
 }:{
   onClose?:(close:boolean)=>void;
+  user?:UserProfile|null
 }) => {
   const [hoveredItem, setHoveredItem] = useState(null);
   const pathname = usePathname();
@@ -89,7 +91,8 @@ export const Sidebar = ({
             <span className="text-white font-bold text-sm">S</span>
           </div>
           <div>
-            <h1 className="font-bold text-base bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="font-bold text-base bg-gradient-to-r from-emerald-600
+             to-blue-600 bg-clip-text text-transparent">
               Shreehill
             </h1>
             <p className="text-xs text-gray-500">Portal</p>
@@ -112,7 +115,9 @@ export const Sidebar = ({
         <div className="px-3 py-2 mb-3 rounded-lg bg-emerald-50 border border-emerald-100">
           <div className="flex justify-between items-center text-xs">
             <span className="text-gray-600">Next Due</span>
-            <span className="font-semibold text-emerald-600">Dec 1</span>
+            <span className="font-semibold text-emerald-600">
+              {user?.rent_due_day||"Dec 1st"}
+            </span>
           </div>
         </div>
 
@@ -120,7 +125,6 @@ export const Sidebar = ({
         <div className="space-y-1">
           {[
             { icon: Settings, label: 'Settings', link: '/dashboard/settings' },
-            { icon: HelpCircle, label: 'Help', link: '/dashboard/help' },
             { icon: LogOut, label: 'Sign Out', link: '/logout', danger: true }
           ].map((item) => {
             const Icon = item.icon;

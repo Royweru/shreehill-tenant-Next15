@@ -14,7 +14,7 @@ export function useAuth() {
     data: user,
     isLoading: isLoadingUser,
     error: userError,
-  } = useQuery<UserStatus>({
+  } = useQuery<UserProfile>({
     queryKey: ['user'], 
     queryFn: () => authService.getCurrentUser(), // Fixed: Call the function
     enabled: authService.isAuthenticated(),

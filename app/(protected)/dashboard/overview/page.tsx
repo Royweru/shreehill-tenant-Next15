@@ -540,15 +540,15 @@ const TenantDashboard = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
-              {user?.profile?.profile_image ? (
+              {user?.profile_image ? (
                 <img 
-                  src={user.profile.profile_image} 
+                  src={user?.profile_image} 
                   alt="Profile" 
                   className="w-16 h-16 rounded-xl object-cover shadow-md"
                 />
               ) : (
                 <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md">
-                  {user?.profile?.first_name?.charAt(0)}{user?.profile?.last_name?.charAt(0)}
+                  {user?.first_name?.charAt(0)}{user?.last_name?.charAt(0)}
                 </div>
               )}
               {mockTenantData.is_tenancy_active && (
@@ -557,7 +557,7 @@ const TenantDashboard = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-blue-600 bg-clip-text text-transparent">
-                Welcome back, {user?.profile?.first_name || 'Tenant'}!
+                Welcome back, {user?.first_name || 'Tenant'}!
               </h1>
               <p className="text-gray-600 flex items-center gap-2 mt-1">
                 {mockTenantData.current_unit ? (

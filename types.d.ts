@@ -28,7 +28,7 @@ interface AuthResponse {
   };
 }
 
-interface User {
+interface UserProfile {
   id: string;
   email: string;
   first_name: string;
@@ -41,6 +41,16 @@ interface User {
   emergency_contact_name?: string;
   emergency_contact_phone?: string;
   date_joined: string;
+  current_unit?:Unit,
+  unit_number?:string,
+  property_name?:string,
+  water_fee:any,
+  role:string,
+  service_charge:string,
+  property_id:string,
+  is_active:boolean,
+  outstanding_balance:any,
+  rent_due_day:number,
   last_login?: string;
 }
 
@@ -63,7 +73,7 @@ interface UserStatus{
     is_staff:boolean;
     is_superuser:boolean;
    },
-   profile:User,
+   profile:UserProfile,
    email_verified:boolean;
 }
 

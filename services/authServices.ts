@@ -29,8 +29,8 @@ class AuthService {
   }
 
   // Get current user profile
-  getCurrentUser = async (): Promise<UserStatus> => {
-    const response = await apiClient.get<UserStatus>('/api/users/status/');
+  getCurrentUser = async (): Promise<UserProfile> => {
+    const response = await apiClient.get<UserProfile>('/api/users/profile/');
     return response;
   }
 

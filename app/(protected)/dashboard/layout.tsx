@@ -47,7 +47,9 @@ export default function DashboardLayout({
 
       {/* Desktop Sidebar */}
       <div className="w-64 lg:block hidden fixed left-0 top-0 h-full z-40">
-        <Sidebar />
+        <Sidebar
+         user={user}
+        />
       </div>
 
       {/* Main Content */}
