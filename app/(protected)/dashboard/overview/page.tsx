@@ -358,7 +358,7 @@ const UnitInfo = ({
   unit:Unit|undefined
 }) => {
   if(!unit) return
-  
+
   return(
   <Card className="p-6">
     <div className="flex items-center gap-3 mb-6">
@@ -392,7 +392,7 @@ const UnitInfo = ({
         <p className="text-sm text-gray-600 mb-2">Lease Period</p>
         <div className="flex items-center gap-2 text-sm text-gray-700">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(unit?.current_tenant.tenancy_start_date)} - {unit.current_tenant?.tenancy_end_date ? formatDate(unit?.current_tenant?.tenancy_end_date) : 'Ongoing'}</span>
+          <span>{formatDate(unit?.current_tenant?.tenancy_start_date)} - {unit.current_tenant?.tenancy_end_date ? formatDate(unit?.current_tenant?.tenancy_end_date) : 'Ongoing'}</span>
         </div>
       </div>
 

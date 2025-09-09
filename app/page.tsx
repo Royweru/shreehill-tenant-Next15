@@ -133,7 +133,7 @@ const ShreehillLanding = () => {
                  font-medium shadow-elegant"
                  onClick={()=>router.push('/auth')}
                  >
-                Get Started
+                 Sign up / Login
               </button>
             </div>
               </>
