@@ -116,7 +116,7 @@ export const Sidebar = ({
           <div className="flex justify-between items-center text-xs">
             <span className="text-gray-600">Next Due</span>
             <span className="font-semibold text-emerald-600">
-              {user?.rent_due_day||"Dec 1st"}
+              {user?.rent_due_day||2}
             </span>
           </div>
         </div>
