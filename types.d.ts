@@ -274,7 +274,10 @@ interface Property{
  units:Unit[]
 }
 
-// types/billing.ts
+interface MyUnitResponse{
+  unit:Unit, 
+  tenant_info:any
+}
 
 
 

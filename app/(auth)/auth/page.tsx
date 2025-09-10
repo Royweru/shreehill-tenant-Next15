@@ -1,13 +1,13 @@
 'use client'
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Home, Mail, Lock, User, Phone, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 // Separate component that uses useSearchParams
 function AuthPagesContent() {
   const searchParams = useSearchParams();
-  const {login, isLoggingIn , register, isRegistering} = useAuth();
+  const {login, isLoggingIn , register, isRegistering,isAuthenticated} = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -26,7 +26,7 @@ function AuthPagesContent() {
   const [formData, setFormData] = useState<AuthFormData>({
     email: '',
     password: '',
-    confirmPassword: '',
+    confirmPassword: '', 
     firstName: '',
     lastName: '',
     phone: ''
@@ -56,6 +56,8 @@ function AuthPagesContent() {
     }
   }, [searchParams]);
 
+
+
   interface InputChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
   const handleInputChange = (e: InputChangeEvent) => {
@@ -84,6 +86,8 @@ function AuthPagesContent() {
     });
   };
 }
+
+if(isAuthenticated) return redirect('/dashboard')
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Hero Image with Overlay */}

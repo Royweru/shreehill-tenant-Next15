@@ -101,7 +101,7 @@ const QuickActions = ({ onPaymentClick, onMaintenanceClick, onNotificationClick,
     onPaymentClick:()=>void,
     onMaintenanceClick:()=>void,
     onNotificationClick:()=>void,
-    onDocumentsClick:()=>void,
+    onDocumentsClick:()=>void, 
 }) => {
   const actions = [
     {
@@ -353,11 +353,11 @@ const RecentPayments = ({ payments }:{payments:Payment[]}) => (
 
 // Unit Info Component
 const UnitInfo = ({ 
-  unit 
+ myUnit
 }:{
-  unit:Unit|undefined
+  myUnit:MyUnitResponse|undefined
 }) => {
-  if(!unit) return
+  if(!myUnit?.unit) return
 
   return(
   <Card className="p-6">
@@ -367,7 +367,7 @@ const UnitInfo = ({
       </div>
       <div>
         <h3 className="text-lg font-semibold text-gray-900">My Unit</h3>
-        <p className="text-sm text-gray-600">{unit.property_name}</p>
+        <p className="text-sm text-gray-600">{myUnit.unit.property_name}</p>
       </div>
     </div>
 
@@ -375,30 +375,30 @@ const UnitInfo = ({
       <div className="grid grid-cols-2 gap-4">
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">Unit Number</p>
-          <p className="text-xl font-bold text-gray-900">{unit.unit_number}</p>
+          <p className="text-xl font-bold text-gray-900">{myUnit.unit.unit_number}</p>
         </div>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600">Unit Type</p>
-          <p className="text-xl font-bold text-gray-900">{unit.unit_type}</p>
+          <p className="text-xl font-bold text-gray-900">{myUnit.unit.unit_type}</p>
         </div>
       </div>
       
       <div className="p-4 bg-gray-50 rounded-lg">
         <p className="text-sm text-gray-600">Monthly Rent</p>
-        <p className="text-2xl font-bold text-gray-900">{formatCurrency(unit.rent_amount)}</p>
+        <p className="text-2xl font-bold text-gray-900">{formatCurrency(myUnit.unit.rent_amount)}</p>
       </div>
       
       <div className="p-4 bg-gray-50 rounded-lg">
         <p className="text-sm text-gray-600 mb-2">Lease Period</p>
         <div className="flex items-center gap-2 text-sm text-gray-700">
           <Calendar className="h-4 w-4" />
-          <span>{formatDate(unit?.current_tenant?.tenancy_start_date)} - {unit.current_tenant?.tenancy_end_date ? formatDate(unit?.current_tenant?.tenancy_end_date) : 'Ongoing'}</span>
+          <span>{formatDate(myUnit.unit?.current_tenant?.tenancy_start_date)} - {myUnit.unit.current_tenant?.tenancy_end_date ? formatDate(myUnit.unit?.current_tenant?.tenancy_end_date) : 'Ongoing'}</span>
         </div>
       </div>
 
       <div className="p-4 bg-gray-50 rounded-lg">
         <p className="text-sm text-gray-600">Address</p>
-        <p className="text-gray-900">{unit.property_name}</p>
+        <p className="text-gray-900">{myUnit.unit.property_name}</p>
       </div>
     </div>
   </Card>
@@ -578,7 +578,7 @@ const TenantDashboard = () => {
                 {unitData ? (
                   <>
                     <Building2 className="h-4 w-4" />
-                    Unit {unitData?.unit_number} • {unitData?.property_name}
+                    Unit {unitData?.unit.unit_number} • {unitData?.unit.property_name}
                     {user.is_active && (
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                         Active Lease
@@ -689,7 +689,7 @@ const TenantDashboard = () => {
           >
 
             <UnitInfo 
-             unit={unitData}
+             myUnit={unitData}
             />
           </motion.div>
         {/* Right Column - Sidebar */}
