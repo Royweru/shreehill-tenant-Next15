@@ -271,30 +271,3 @@ export const formatDate = (dateString:any) => {
     day: 'numeric'
   });
 };
-
-
-export const tenantQueryKeys = {
-  dashboard: ['tenant', 'dashboard'] as const,
-  bills: {
-    all: ['tenant', 'bills'] as const,
-    list: (params?: any) => ['tenant', 'bills', 'list', params] as const,
-    detail: (id: string) => ['tenant', 'bills', 'detail', id] as const,
-    overdue: (params?: any) => ['tenant', 'bills', 'overdue', params] as const,
-    summary: ['tenant', 'bills', 'summary'] as const,
-  },
-  payments: {
-    all: ['tenant', 'payments'] as const,
-    list: (params?: any) => ['tenant', 'payments', 'list', params] as const,
-    detail: (id: string) => ['tenant', 'payments', 'detail', id] as const,
-    recent: ['tenant', 'payments', 'recent'] as const,
-    status: (id: string) => ['tenant', 'payments', 'status', id] as const,
-  },
-  property: {
-    my: ['tenant', 'property', 'my'] as const,
-    unit: ['tenant', 'unit', 'my'] as const,
-  },
-  notifications: {
-    all: ['tenant', 'notifications'] as const,
-    list: (params?: any) => ['tenant', 'notifications', 'list', params] as const,
-  },
-};

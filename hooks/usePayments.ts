@@ -57,12 +57,12 @@ export const useDashboardStats = () => {
   });
 };
 
-// Payment History Hook
-export const usePaymentHistory = (page: number = 1, pageSize: number = 10) => {
+// Update your usePaymentHistory hook
+export const usePaymentHistory = (page: number = 1, pageSize: number = 10, filters?: PaymentFilters) => {
   return useQuery({
-    queryKey: ['payments', 'history', { page, pageSize }],
-    queryFn: () => paymentService.getPaymentHistory(page, pageSize),
-     // Keep previous data while loading new page
+    queryKey: paymentQueryKeys.history(page, pageSize, filters),
+    queryFn: () => paymentService.getPaymentHistory(page, pageSize, filters),
+    staleTime: 30 * 1000,
   });
 };
 

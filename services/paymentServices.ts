@@ -1,16 +1,6 @@
 // services/paymentService.ts
 import { apiClient } from '@/lib/apiClient';
-// import type {
-//   Bill,
-//   Payment,
-//   BillSummary,
-//   MPesaPaymentRequest,
-//   MPesaPaymentResponse,
-//   PaymentStatus,
-//   PaginatedResponse,
-//   BillFilters,
-//   PaymentFilters
-// } from '@/types/billing';
+
 
 export const paymentService = {
  
@@ -69,10 +59,24 @@ export const paymentService = {
     return response
   },
 
-  // Payment History with Pagination
-  getPaymentHistory: async (page: number = 1, pageSize: number = 10) => {
-    const response = await apiClient.get(`/api/billing/payments/?page=${page}&page_size=${pageSize}&ordering=-payment_date`);
-    return response
+// Updated Payment History with Filtering
+  getPaymentHistory: async (page: number = 1, pageSize: number = 10, filters?: PaymentFilters) => {
+    const params = new URLSearchParams();
+    
+    // Add pagination
+    params.append('page', page.toString());
+    params.append('page_size', pageSize.toString());
+    
+    // Add filters if provided
+    if (filters?.search) params.append('search', filters.search);
+    if (filters?.payment_status) params.append('payment_status', filters.payment_status);
+    if (filters?.payment_method) params.append('payment_method', filters.payment_method);
+    if (filters?.date_from) params.append('date_from', filters.date_from);
+    if (filters?.date_to) params.append('date_to', filters.date_to);
+    if (filters?.ordering) params.append('ordering', filters.ordering);
+    
+    const response = await apiClient.get<PaymentHistoryData>(`/api/billing/payments/?${params.toString()}`);
+    return response;
   },
 
   // Search functionality

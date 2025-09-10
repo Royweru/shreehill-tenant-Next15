@@ -11,6 +11,8 @@ export const paymentQueryKeys = {
   recent: () => [...paymentQueryKeys.all, 'recent'] as const,
   infinite:(filters?:PaymentFilters)=>[...paymentQueryKeys.all,'infinite', filters] as const,
   analytics:()=>[...paymentQueryKeys.all, 'analytics'] as const,
+   history: (page?: number, pageSize?: number, filters?: PaymentFilters) => 
+    [...paymentQueryKeys.all, 'history', { page, pageSize, filters }] as const,
   status: (id: string) => [...paymentQueryKeys.all, 'status', id] as const,
 };
 

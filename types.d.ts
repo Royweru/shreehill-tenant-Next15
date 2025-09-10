@@ -339,6 +339,14 @@ interface MyUnitResponse{
   response_code?: string;
 }
 
+interface PaymentHistoryData {
+  results: Payment[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+
  interface PaymentStatus {
   payment_id: string;
   payment_reference: string;
