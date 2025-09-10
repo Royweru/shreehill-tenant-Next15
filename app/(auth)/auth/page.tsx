@@ -56,7 +56,15 @@ function AuthPagesContent() {
     }
   }, [searchParams]);
 
-
+ useEffect(()=>{
+  const view = searchParams.get('view')
+  if (view&& view==='signup'){
+    setIsLogin(false)
+  }else{
+    setIsLogin(true)
+  }
+ },[searchParams])
+ 
 
   interface InputChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 

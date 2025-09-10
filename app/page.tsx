@@ -98,13 +98,16 @@ const ShreehillLanding = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
+              <a href="#features" className="text-charcoal font-semibold
+               cursor-pointer hover:text-brand-primary transition-colors">
                 Features
               </a>
-              <a href="#testimonials" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
+              <a href="#testimonials" className="text-charcoal font-semibold 
+              cursor-pointer hover:text-brand-primary transition-colors">
                 Testimonials
               </a>
-              <a href="#contact" className="text-charcoal font-semibold cursor-pointer hover:text-brand-primary transition-colors">
+              <a href="#contact" className="text-charcoal font-semibold
+               cursor-pointer hover:text-brand-primary transition-colors">
                 Contact
               </a>
             </div>
@@ -203,12 +206,27 @@ const ShreehillLanding = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="group bg-gradient-brand text-cream px-8 py-4 rounded-xl font-semibold text-lg shadow-elegant-hover hover:shadow-2xl transition-all duration-300 flex items-center justify-center space-x-2">
+                <button 
+                className="group bg-gradient-brand 
+                text-cream px-8 py-4 rounded-xl font-semibold
+                 text-lg shadow-elegant-hover hover:shadow-2xl
+                  transition-all duration-300
+                   flex items-center justify-center
+                    space-x-2"
+                    onClick={()=>router.push('/dashboard/')}
+                    >
                   <span>Access Your Portal</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
                 
-                <button className="border-2 border-brand-primary text-brand-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-brand-primary hover:text-cream transition-all duration-300">
+                <button
+                 className="border-2 border-brand-primary 
+                 text-brand-primary px-8 py-4 rounded-xl 
+                 font-semibold text-lg hover:bg-brand-
+                 primary hover:text-cream 
+                 transition-all duration-300"
+                 onClick={()=>router.push("/auth?view=signup")}
+                 >
                   Create Account
                 </button>
               </div>
@@ -288,7 +306,8 @@ const ShreehillLanding = () => {
               Everything You Need in One Place
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover how Shreehill transforms your rental experience with powerful tools designed for modern living.
+              Discover how Shreehill transforms your rental experience
+               with powerful tools designed for modern living.
             </p>
           </div>
 
@@ -382,12 +401,23 @@ const ShreehillLanding = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="group bg-gradient-brand text-cream px-8 py-4 rounded-xl font-semibold text-lg shadow-elegant-hover hover:shadow-2xl transition-all duration-300 flex items-center justify-center space-x-2">
+            <button className="group bg-gradient-brand text-cream px-8 py-4
+             rounded-xl font-semibold text-lg shadow-elegant-hover 
+             hover:shadow-2xl transition-all duration-300 
+             flex items-center justify-center space-x-2"
+             onClick={()=>router.push('/dashboard')} 
+             >
               <span>Get Started Today</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             
-            <button className="border-2 border-brand-primary text-brand-primary px-8 py-4 rounded-xl font-semibold text-lg hover:bg-brand-primary hover:text-cream transition-all duration-300">
+            <button className="border-2 border-brand-primary 
+            text-brand-primary px-8 py-4 rounded-xl font-semibold 
+            text-lg hover:bg-brand-primary 
+            hover:text-cream 
+            transition-all 
+            duration-300"
+            >
               Schedule a Demo
             </button>
           </div>
