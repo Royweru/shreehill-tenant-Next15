@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/providers/AuthContext';
+import Link from 'next/link';
 
 const ShreehillLanding = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -455,7 +456,7 @@ const ShreehillLanding = () => {
               <ul className="space-y-2 text-cream/70">
                 <li className="flex items-center space-x-2">
                   <Phone className="w-4 h-4" />
-                  <span>+254 700 000 000</span>
+                  <span>+254 759 355 344</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Mail className="w-4 h-4" />
@@ -463,7 +464,7 @@ const ShreehillLanding = () => {
                 </li>
                 <li className="flex items-center space-x-2">
                   <MapPin className="w-4 h-4" />
-                  <span>Nairobi, Kenya</span>
+                  <span>Nairobi,Athi river, Kenya</span>
                 </li>
               </ul>
             </div>
@@ -482,6 +483,15 @@ const ShreehillLanding = () => {
             </div>
           </div>
           
+          <div className=" border-cream/20 mt-6 pt-4 text-center text-charcoal">
+            <p> Powered by
+               <span className=' cursor-pointer italic font-bold  ml-2'>
+                  <a href="https://designer-umber.vercel.app/" target="_blank" rel="noopener noreferrer">
+                   Code Aura
+                  </a>
+               </span>
+            </p>
+          </div>
           <div className="border-t border-cream/20 mt-12 pt-8 text-center text-cream/70">
             <p>&copy; 2024 Shreehill Estates. All rights reserved.</p>
           </div>
