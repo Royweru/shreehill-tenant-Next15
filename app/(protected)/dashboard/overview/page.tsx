@@ -360,7 +360,7 @@ const UnitInfo = ({
   if(!myUnit?.unit) return
 
   return(
-  <Card className="p-6">
+  <Card className="p-6 w-full">
     <div className="flex items-center gap-3 mb-6">
       <div className="p-2 bg-indigo-100 rounded-lg">
         <Home className="h-6 w-6 text-indigo-600" />

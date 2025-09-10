@@ -16,7 +16,7 @@ export const Sidebar = ({
 
   const NavigationItem = ({ item, index }:{item:any, index:any}) => {
     const Icon = item.icon;
-    const isActive = pathname === item.link || item.active;
+    const isActive = pathname === item.link;
     const isHovered = hoveredItem === index;
 
     return (
@@ -103,7 +103,7 @@ export const Sidebar = ({
       {/* Navigation */}
       <nav className="flex-1 p-3">
         <div className="space-y-1">
-          {navigation.map((item, index) => (
+          {navigation().map((item, index) => (
             <NavigationItem key={item.link} item={item} index={index} />
           ))}
         </div>

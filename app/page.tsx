@@ -483,10 +483,10 @@ const ShreehillLanding = () => {
             </div>
           </div>
           
-          <div className=" border-cream/20 mt-6 pt-4 text-center text-charcoal">
+          <div className=" mt-4 pt-4 text-center text-charcoal">
             <p> Powered by
                <span className=' cursor-pointer italic font-bold  ml-2'>
-                  <a href="https://designer-umber.vercel.app/" target="_blank" rel="noopener noreferrer">
+                  <a href="" target="_blank" rel="noopener noreferrer">
                    Code Aura
                   </a>
                </span>

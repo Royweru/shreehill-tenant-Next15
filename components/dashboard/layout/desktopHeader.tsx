@@ -11,6 +11,7 @@ import { useNotifications, useNotificationSummary, useUnreadCount, useMarkNotifi
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useBillSummary } from '@/hooks/useBills';
 
 
 interface DesktopHeaderProps {
@@ -37,6 +38,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
   // Fetch real notification data
   const { data: notificationsData, isLoading: notificationsLoading } = useNotifications({ page: 1 });
   const { data: unreadCount } = useUnreadCount();
+  const {data:billSummary} =useBillSummary()
   const markAsReadMutation = useMarkNotificationAsRead();
   const markAllAsReadMutation = useMarkAllNotificationsAsRead();
 
@@ -114,27 +116,36 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
         </div>
 
         {/* Quick Stats */}
-        <div className="flex items-center gap-4 ml-8">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100/50">
+        <div className="flex items-center justify-center gap-4 ml-4">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl
+           bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100/50">
             <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
             <div className="text-xs">
               <p className="text-gray-500">Balance</p>
-              <p className="font-semibold text-emerald-600">KES 0</p>
+              <p className="font-semibold text-emerald-600">KES 
+                <span className=' ml-2'>
+               {billSummary?.current_balance}
+                </span>
+                
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100/50">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl
+           bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100/50">
             <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
             <div className="text-xs">
               <p className="text-gray-500">Next Due</p>
-              <p className="font-semibold text-blue-600">Dec 1st</p>
+              <p className="font-semibold text-blue-600">
+                {user?.rent_due_day}
+              </p>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ml-2">
         {/* Enhanced Search */}
-        <div className="relative">
+        {/* <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
@@ -143,7 +154,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-        </div>
+        </div> */}
 
         {/* Real Notifications Dropdown */}
         <div className="relative" ref={notificationRef}>
@@ -315,7 +326,8 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setShowProfile(!showProfile)}
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 hover:shadow-md hover:shadow-emerald-500/10 transition-all duration-300 border border-transparent hover:border-emerald-200/50"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-gradient-to-r
+             hover:from-emerald-50 hover:to-blue-50 hover:shadow-md hover:shadow-emerald-500/10 transition-all duration-300 border border-transparent hover:border-emerald-200/50"
           >
             <div className="w-10 h-10 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-md">
               <span className="text-white font-bold text-sm">
@@ -333,10 +345,12 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
 
           {/* Profile Dropdown */}
           {showProfile && (
-            <div className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-200/60 py-2 z-50">
+            <div className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl 
+            border border-gray-200/60 py-2 z-50">
               <div className="px-4 py-3 border-b border-gray-100">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-xl flex items-center justify-center shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-400
+                   to-blue-500 rounded-full flex items-center justify-center shadow-md">
                     <span className="text-white font-bold text-sm">
                       {user?.first_name?.charAt(0) || 'U'}{user?.last_name?.charAt(0) || 'S'}
                     </span>

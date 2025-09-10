@@ -23,6 +23,7 @@ import {
 } from '@/hooks/usePayments';
 
 import { useBills,useBillSummary } from '@/hooks/useBills';
+import { useMpesaPaymentModal } from '@/modalHooks/useMpesaPaymentModal';
 const PaymentsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPeriod, setSelectedPeriod] = useState('all');
@@ -32,11 +33,11 @@ const PaymentsPage = () => {
   // Data fetching
   const { data: summary, isLoading: summaryLoading } = useBillSummary();
   const { data: billsData, isLoading: billsLoading } = useBills({ 
-    status: 'pending,partial,overdue' 
+    status: 'pending' 
   });
   const { data: recentPayments } = useRecentPayments();
   const { data: analytics } = usePaymentAnalytics();
-  
+  const {onOpen:openMpesaPaymentModal}=useMpesaPaymentModal()
   const mpesaPayment = useMpesaPayment();
 
   // Calculations for dashboard stats
@@ -239,7 +240,8 @@ const PaymentsPage = () => {
                   const StatusIcon = statusDisplay.icon;
                   
                   return (
-                    <div key={bill.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div key={bill.id} className="flex items-center justify-between p-4
+                     bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="flex items-center space-x-4">
                         <div className={`p-2 rounded-full ${statusDisplay.color}`}>
                           <StatusIcon className="w-5 h-5" />
@@ -335,13 +337,13 @@ const PaymentsPage = () => {
               <h2 className="text-xl font-semibold text-gray-900">Quick Actions</h2>
             </div>
             <div className="p-6 space-y-3">
-              <button className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+              <button className="w-full flex items-center justify-center
+               gap-2 py-3 px-4 bg-green-600 text-white rounded-lg
+                hover:bg-green-700 transition-colors"
+                onClick={openMpesaPaymentModal}
+                >
                 <Phone className="w-5 h-5" />
                 Pay with M-Pesa
-              </button>
-              <button className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                <Download className="w-5 h-5" />
-                Download Statements
               </button>
               <button className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 <Calendar className="w-5 h-5" />
