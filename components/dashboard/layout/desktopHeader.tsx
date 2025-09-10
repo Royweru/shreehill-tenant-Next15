@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { getPageTitle } from '@/constants';
-import { cn } from '@/lib/utils';
+import { cn, formatCurrency } from '@/lib/utils';
 import { Bell, ChevronDown, Search, Settings, User, X, CheckCircle, Clock } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -124,7 +124,7 @@ export const DesktopHeader: React.FC<DesktopHeaderProps> = ({
               <p className="text-gray-500">Balance</p>
               <p className="font-semibold text-emerald-600">KES 
                 <span className=' ml-2'>
-               {billSummary?.current_balance}
+               {formatCurrency(billSummary?.current_balance)}
                 </span>
                 
               </p>
