@@ -30,21 +30,22 @@ import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import toast from 'react-hot-toast';
+import { useAuthContext } from '@/providers/AuthContext';
 const SettingsPage = () => {
-
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+   const {user} = useAuthContext()
 
   // Profile state
   const [profileData, setProfileData] = useState({
-    first_name: 'John',
-    last_name: 'Warui',
-    email: 'john.warui@example.com',
-    phone_number: '+254712345678',
-    profile_image: null,
-    is_verified: true
+    first_name: user?.first_name,
+    last_name: user?.last_name,
+    email:user?.email,
+    phone_number:user?.profile_image,
+    profile_image:user?.profile_image,
+    is_verified: user?.email_verified
   });
 
   // Password change state
