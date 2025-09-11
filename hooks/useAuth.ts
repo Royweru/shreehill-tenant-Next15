@@ -47,7 +47,19 @@ export function useAuth() {
       toast.error(message);
     },
   });
+ 
 
+  //Password change 
+  const changePasswordMutation = useMutation({
+    mutationFn:(passwordData:{old_password:string,new_password1:string,new_password2:string})=>authService.changePassword(passwordData),
+    onSuccess:(data)=>{
+      toast.success("Password changed successfully")
+    },
+    onError:(err:any)=>{
+      const message =handleDjangoError(err)
+      toast.error(message)
+    }
+  })
   // Login mutation
   const loginMutation = useMutation({
     mutationFn: authService.login,
@@ -119,8 +131,11 @@ export function useAuth() {
     isVerifying: verifyEmailMutation.isPending,
     verificationError: verifyEmailMutation.isError,
     verifyEmail: verifyEmailMutation.mutate,
-    updateUserProfile:updateUserProfileMutation.mutateAsync,
+    updateUserProfile:updateUserProfileMutation.mutate,
+    isUpdatingUserProfile:updateUserProfileMutation.isPending,
     verificationData: verifyEmailMutation.data,
+    changePassword:changePasswordMutation.mutate,
+    isChangingPassword:changePasswordMutation.isPending,
     resendVerification: resendVerificationMutation.mutateAsync,
     isResending: resendVerificationMutation.isPending,
   };

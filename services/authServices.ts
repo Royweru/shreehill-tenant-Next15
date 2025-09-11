@@ -27,7 +27,9 @@ class AuthService {
   resendEmailVerification = async (): Promise<{ message: string }> => {
     return await apiClient.post<{ message: string }>('/api/users/resend-verification/');
   }
-
+  changePassword=async (passwordData:any) => {
+    return await  apiClient.post('/api/users/password/change/',passwordData)
+  }
   // Get current user profile
   getCurrentUser = async (): Promise<UserProfile> => {
     const response = await apiClient.get<UserProfile>('/api/users/profile/');

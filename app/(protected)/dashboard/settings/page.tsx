@@ -16,9 +16,6 @@ import {
   CheckCircle,
   Mail,
   Phone,
-  MapPin,
-  Calendar,
-  Home
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,16 +25,24 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import toast from 'react-hot-toast';
 import { useAuthContext } from '@/providers/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 const SettingsPage = () => {
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
    const {user} = useAuthContext()
-
+ 
+  const {
+    updateUserProfile,
+    resendVerification,
+    isResending,
+    changePassword,
+     isChangingPassword,
+      isUpdatingUserProfile
+    }= useAuth()
   // Profile state
   const [profileData, setProfileData] = useState({
     first_name: user?.first_name,
@@ -60,7 +65,7 @@ const SettingsPage = () => {
     email_enabled: true,
     sms_enabled: false,
     whatsapp_enabled: true,
-    payment_notifications: true,
+    payment_notifications: true, 
     maintenance_notifications: true,
     community_notifications: false,
     marketing_notifications: false
@@ -75,88 +80,20 @@ const SettingsPage = () => {
 
   const handleProfileUpdate = async (e:React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/accounts/profile/', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify(profileData)
-      });
-
-      if (response.ok) {
-        toast.success("Your profile has been updated successfully.");
-      } else {
-        throw new Error('Failed to update profile');
-      }
-    } catch (error) {
-      toast.error("Failed to update profile. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    updateUserProfile(profileData)    
   };
 
   const handlePasswordChange = async (e:React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault(); 
     if (passwordData.new_password1 !== passwordData.new_password2) {
       toast.error("New passwords do not match.");
       return;
     }
-
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/accounts/password/change/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        },
-        body: JSON.stringify(passwordData)
-      });
-
-      if (response.ok) {
-        toast.success("Your password has been updated successfully.");
-        setPasswordData({
-          old_password: '',
-          new_password1: '',
-          new_password2: ''
-        });
-      } else {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Failed to change password');
-      }
-    } catch (error:any) {
-      toast.error("Failed to change password. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    changePassword(passwordData)
   };
 
   const handleResendVerification = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/accounts/resend-verification/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-      });
-
-      if (response.ok) {
-        toast.error("Please check your email for verification instructions.");
-      } else {
-        throw new Error('Failed to send verification email');
-      }
-    } catch (error) {
-      toast.error("Failed to send verification email. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+     resendVerification()
   };
 
   return (
@@ -171,7 +108,8 @@ const SettingsPage = () => {
           <Settings className="h-6 w-6 text-white" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-700 via-emerald-600 to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-700
+           via-emerald-600 to-blue-600 bg-clip-text text-transparent">
             Account Settings
           </h1>
           <p className="text-gray-600">Manage your account preferences and security settings</p>
@@ -227,7 +165,7 @@ const SettingsPage = () => {
                           variant="link"
                           className="p-0 h-auto text-orange-600 underline"
                           onClick={handleResendVerification}
-                          disabled={loading}
+                          disabled={isResending}
                         >
                           Resend verification email
                         </Button>
@@ -292,7 +230,11 @@ const SettingsPage = () => {
 
                   <Separator />
 
-                  <Button type="submit" disabled={loading} className="flex items-center gap-2">
+                  <Button 
+                  type="submit"
+                   disabled={isUpdatingUserProfile}
+                    className="flex items-center gap-2"
+                    >
                     <Save className="h-4 w-4" />
                     {loading ? 'Saving...' : 'Save Changes'}
                   </Button>
@@ -399,7 +341,8 @@ const SettingsPage = () => {
                   <Alert>
                     <Shield className="h-4 w-4" />
                     <AlertDescription>
-                      Make sure your password is at least 8 characters long and includes a mix of letters, numbers, and symbols.
+                      Make sure your password is at least 8 characters long and includes
+                       a mix of letters, numbers, and symbols.
                     </AlertDescription>
                   </Alert>
 
